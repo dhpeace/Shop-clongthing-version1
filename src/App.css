@@ -1,0 +1,11 @@
+.navbar {
+  position: relative;
+  z-index: 1000; /* Chọn một giá trị phù hợp, đảm bảo nó lớn hơn z-index của banner */
+}
+
+/* Banner */
+header {
+  /* Các thuộc tính khác của banner */
+  position: relative;
+  z-index: 999; /* Chọn một giá trị phù hợp, nhỏ hơn z-index của thanh navbar */
+}
