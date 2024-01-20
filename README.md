@@ -16,7 +16,7 @@ Currently, two official plugins are available:
 - Title: Tên sản phẩm.
 - Color: Màu sắc của sản phẩm.
 - Discounted Price: Giá giảm giá (nếu có).
-- DiscountPersent: Tỉ lệ chiết khấu
+- DiscountPersent: Tỉ lệ chiết khấu (Nên có)
 - Price: Giá gốc của sản phẩm.
 - Size: Kích thước của sản phẩm (nếu có).
 - Quantity: Số lượng tồn kho của sản phẩm.
