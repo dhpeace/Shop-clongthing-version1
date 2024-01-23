@@ -7,6 +7,7 @@ import Navigation from "../Component/Navigation/Navigation";
 import Footer from "../Component/Footer/Footer";
 import Product from "../Component/Product/Product";
 import ProductDetail from "../Component/ProductDetail/ProductDetail";
+import Checkout from "../Component/Checkout/Checkout";
 
 function CustomerRouters() {
   return (
@@ -17,9 +18,10 @@ function CustomerRouters() {
       <Routes>
         <Route path="/login" element={<Homepage />} />
         <Route path="/register" element={<Homepage />} />
-        
+
         <Route path="/" element={<Homepage />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route path="/product" element={<Product />} />
         <Route path="/product/:id" element={<ProductDetail />} />
       </Routes>

@@ -21,7 +21,7 @@ function RegisterForm() {
     console.log("userData", userData);
   };
   return (
-    <div>
+    <div className="bg-gray-100 p-5 rounded-lg shadow-lg max-w-md mx-auto">
       <form onSubmit={handleSubmit}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
@@ -29,19 +29,21 @@ function RegisterForm() {
               required
               id="firtname"
               name="firtname"
-              label="Firtname"
+              label="First Name"
               fullWidth
               autoComplete="given-name"
+              variant="outlined"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               required
               id="lastname"
               name="lastname"
-              label="Lastname"
+              label="Last Name"
               fullWidth
-              autoComplete="given-name"
+              autoComplete="family-name"
+              variant="outlined"
             />
           </Grid>
           <Grid item xs={12}>
@@ -49,9 +51,10 @@ function RegisterForm() {
               required
               id="email"
               name="email"
-              label="email"
+              label="Email"
               fullWidth
               autoComplete="email"
+              variant="outlined"
             />
           </Grid>
           <Grid item xs={12}>
@@ -59,28 +62,37 @@ function RegisterForm() {
               required
               id="password"
               name="password"
-              label="password"
+              label="Password"
               fullWidth
               autoComplete="password"
+              type="password"
+              variant="outlined"
             />
           </Grid>
           <Grid item xs={12}>
             <Button
-              className="bg-blue-700 w-[full]"
               type="submit"
               variant="contained"
               size="large"
-              sx={{ padding: ".8rem 0" }}>
+              sx={{
+                padding: ".8rem 0",
+                backgroundColor: "#3f51b5",
+                color: "#fff",
+                width: "100%",
+              }}>
               Register
             </Button>
           </Grid>
         </Grid>
       </form>
-
-      <div className="flex justify-center flex-col items-center">
+      <div className="flex justify-center flex-col items-center mt-5">
         <div className="py-3 flex items-center">
-          <p> if you have alredy acount? </p>
-          <Button onClick={handleClickLogin} className="ml-5" size="small">
+          <p> If you already have an account, </p>
+          <Button
+            onClick={handleClickLogin}
+            className="ml-5"
+            size="small"
+            color="primary">
             Login
           </Button>
         </div>
