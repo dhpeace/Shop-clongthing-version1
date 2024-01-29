@@ -1,16 +1,15 @@
-import "./App.css";
-import { BrowserRouter as Router } from "react-router-dom";
-import CustomerRouters from "./Custommer/Routers/CustomerRouters";
-
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import CustomerRouters from "./Routers/CustomerRouters";
+import AdminRouters from "./Routers/AdminRouters";
 
 function App() {
   return (
-    <>
-      <Router>
-        <CustomerRouters />
-  
-      </Router>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/*" element={<CustomerRouters />}></Route>
+        <Route path="/admin/*" element={<AdminRouters />}></Route>
+      </Routes>
+    </Router>
   );
 }
 

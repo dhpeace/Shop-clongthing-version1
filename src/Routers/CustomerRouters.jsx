@@ -1,13 +1,14 @@
 // eslint-disable-next-line no-unused-vars
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Homepage from "../Pages/Homepage";
-import Cart from "../Component/Cart/Cart";
-import Navigation from "../Component/Navigation/Navigation";
-import Footer from "../Component/Footer/Footer";
-import Product from "../Component/Product/Product";
-import ProductDetail from "../Component/ProductDetail/ProductDetail";
-import Checkout from "../Component/Checkout/Checkout";
+
+import ProductDetail from "../Custommer/Component/ProductDetail/ProductDetail";
+import Checkout from "../Custommer/Component/Checkout/Checkout";
+import Homepage from "../Custommer/Pages/Homepage";
+import Cart from "../Custommer/Component/Cart/Cart";
+import Navigation from "../Custommer/Component/Navigation/Navigation";
+import Footer from "../Custommer/Component/Footer/Footer";
+import Product from "../Custommer/Component/Product/Product";
 
 function CustomerRouters() {
   return (

@@ -2,7 +2,7 @@
 import React from "react";
 import MainCarousel from "../Component/HomeCarousel/MainCarousel";
 import HomeSectionCarosel from "../Component/HomeSectionCarosel/HomeSectionCarosel";
-import { coolmate } from "../Data/coolmate";
+import { coolmate } from "../../Data/coolmate";
 
 function Homepage() {
   return (

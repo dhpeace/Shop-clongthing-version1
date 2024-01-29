@@ -9,7 +9,7 @@ import {
   Squares2X2Icon,
 } from "@heroicons/react/20/solid";
 import ProductCard from "./ProductCard";
-import { coolmate } from "../../Data/coolmate";
+import { coolmate } from "../../../Data/coolmate";
 import { useNavigate } from "react-router-dom";
 
 const sortOptions = [

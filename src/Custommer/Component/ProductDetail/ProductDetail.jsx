@@ -3,7 +3,7 @@ import { Box, Grid, LinearProgress, Rating } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductReviewCart from "./ProductReviewCart";
-import { coolmate } from "../../Data/coolmate";
+import { coolmate } from "../../../Data/coolmate";
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
 
 const product = {
