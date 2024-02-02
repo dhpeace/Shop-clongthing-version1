@@ -11,6 +11,7 @@ import {
   REGISTER_REQUEST,
   REGISTER_SUCCESS,
 } from "./ActionType";
+import { API_BASE_URL } from "../../config/apiConfig";
 
 const token = localStorage.getItem("jwt");
 
@@ -21,8 +22,12 @@ const registerFailure = (error) => ({ type: REGISTER_FAILURE, payload: error });
 
 export const register = (userData) => async (dispatch) => {
   dispatch(registerRequest());
+  userData = { ...userData, name: userData.firtName + " " + userData.lastName };
   try {
-    const response = await axios.post("${API_BASE_URL}/auth/signup", userData);
+    const response = await axios.post(
+      `${API_BASE_URL}/auth/register`,
+      userData
+    );
     const user = response.data;
     if (user.jwt) {
       localStorage.setItem("jwt", user.jwt);
@@ -41,7 +46,7 @@ const loginFailure = (error) => ({ type: LOGIN_FAILURE, payload: error });
 export const login = (userData) => async (dispatch) => {
   dispatch(loginRequest());
   try {
-    const response = await axios.post("${API_BASE_URL}/auth/sigin", userData);
+    const response = await axios.post(`${API_BASE_URL}/auth/login`, userData);
     const user = response.data;
     if (user.jwt) {
       localStorage.setItem("jwt", user.jwt);

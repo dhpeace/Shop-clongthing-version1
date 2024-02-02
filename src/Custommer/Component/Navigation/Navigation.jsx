@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -145,9 +145,26 @@ function classNames(...classes) {
 
 export default function Navigation() {
   const [open, setOpen] = useState(false);
+  const [openAuthModal, setOpenAuthModal] = useState(false);
+  // const [anchorEl, setAnchorEl] = useState(null);
+  // const openUserMenu = Boolean(anchorEl);
+  // const jwt = localStorage.getItem("jwt");
+
   const navigagte = useNavigate();
 
-  const [openAuthModal, setOpenAuthModal] = useState(false);
+  // useEffect(() => {
+  //   if (jwt) {
+  //     dispatch(getUser(jwt));
+  //   }
+  // }, [jwt]);
+
+  // const handleUserClick = (event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
+
+  // const handleCloseUserMenu = (event) => {
+  //   setAnchorEl(null);
+  // };
 
   const handleOpen = () => {
     setOpenAuthModal(true);
@@ -156,6 +173,21 @@ export default function Navigation() {
   const handleClose = () => {
     setOpenAuthModal(false);
   };
+
+  // const handleCategoryClick = (category, section, item, close) => {
+  //   // navigagte(`/${category.id}/${section.id}/${item.id}`);
+  //   close();
+  // };
+
+  // useEffect(() => {
+  //   if (auth.user) {
+  //     handleClose();
+  //   }
+  //   if (location.pathname === "/login" || location.pathname === "/register") {
+  //     navigagte(-1);
+  //   }
+  // }, [auth.user]);
+
   const HandleToProduct = () => {
     navigagte("/product");
   };
