@@ -8,6 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 import AuthModal from "../Auth/AuthModal";
+import { useDispatch } from "react-redux";
 
 const navigation = {
   categories: [
@@ -146,25 +147,27 @@ function classNames(...classes) {
 export default function Navigation() {
   const [open, setOpen] = useState(false);
   const [openAuthModal, setOpenAuthModal] = useState(false);
-  // const [anchorEl, setAnchorEl] = useState(null);
-  // const openUserMenu = Boolean(anchorEl);
-  // const jwt = localStorage.getItem("jwt");
 
   const navigagte = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openUserMenu = Boolean(anchorEl);
+  const jwt = localStorage.getItem("jwt");
+  const { auth } = useSelector((store) => store);
+  const dispatch = useDispatch(); 
 
-  // useEffect(() => {
-  //   if (jwt) {
-  //     dispatch(getUser(jwt));
-  //   }
-  // }, [jwt]);
+  useEffect(() => {
+    if (jwt) {
+      dispatch(getUser(jwt));
+    }
+  }, [jwt]);
 
-  // const handleUserClick = (event) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
+  const handleUserClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-  // const handleCloseUserMenu = (event) => {
-  //   setAnchorEl(null);
-  // };
+  const handleCloseUserMenu = (event) => {
+    setAnchorEl(null);
+  };
 
   const handleOpen = () => {
     setOpenAuthModal(true);
@@ -174,19 +177,19 @@ export default function Navigation() {
     setOpenAuthModal(false);
   };
 
-  // const handleCategoryClick = (category, section, item, close) => {
-  //   // navigagte(`/${category.id}/${section.id}/${item.id}`);
-  //   close();
-  // };
+  const handleCategoryClick = (category, section, item, close) => {
+    navigagte(`/${category.id}/${section.id}/${item.id}`);
+    close();
+  };
 
-  // useEffect(() => {
-  //   if (auth.user) {
-  //     handleClose();
-  //   }
-  //   if (location.pathname === "/login" || location.pathname === "/register") {
-  //     navigagte(-1);
-  //   }
-  // }, [auth.user]);
+  useEffect(() => {
+    if (auth.user) {
+      handleClose();
+    }
+    if (location.pathname === "/login" || location.pathname === "/register") {
+      navigagte(-1);
+    }
+  }, [auth.user]);
 
   const HandleToProduct = () => {
     navigagte("/product");
@@ -228,7 +231,6 @@ export default function Navigation() {
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
-
                 {/* Links */}
                 <Tab.Group as="div" className="mt-2">
                   <div className="border-b border-gray-200">
@@ -308,7 +310,6 @@ export default function Navigation() {
                     ))}
                   </Tab.Panels>
                 </Tab.Group>
-
                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
                   {navigation.pages.map((page) => (
                     <div key={page.name} className="flow-root">
@@ -387,7 +388,6 @@ export default function Navigation() {
                   />
                 </a>
               </div>
-
               {/* Flyout menus */}
               <Popover.Group className="hidden lg:ml-8 lg:block lg:self-stretch">
                 <div className="flex h-full space-x-8">
@@ -504,17 +504,17 @@ export default function Navigation() {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <a
+                  {/* <a
                     href="#"
                     className="text-sm font-medium text-gray-700 hover:text-gray-800">
                     Đăng nhập
-                  </a>
+                  </a> */}
                   <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
                   <a
                     onClick={handleOpen}
                     href="#"
                     className="text-sm font-medium text-gray-700 hover:text-gray-800">
-                    Đăng ký tài khoản
+                    Sign in
                   </a>
                 </div>
 
