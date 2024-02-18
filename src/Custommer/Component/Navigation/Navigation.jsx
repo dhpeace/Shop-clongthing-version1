@@ -9,6 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import AuthModal from "../Auth/AuthModal";
 import { useDispatch } from "react-redux";
+import { getUser } from "../../../State/Auth/Action";
 
 const navigation = {
   categories: [
@@ -152,14 +153,8 @@ export default function Navigation() {
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
   const jwt = localStorage.getItem("jwt");
-  const { auth } = useSelector((store) => store);
-  const dispatch = useDispatch(); 
-
-  useEffect(() => {
-    if (jwt) {
-      dispatch(getUser(jwt));
-    }
-  }, [jwt]);
+  // const { auth } = useSelector((store) => store);
+  const dispatch = useDispatch();
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -183,13 +178,19 @@ export default function Navigation() {
   };
 
   useEffect(() => {
-    if (auth.user) {
-      handleClose();
+    if (jwt) {
+      dispatch(getUser(jwt));
     }
-    if (location.pathname === "/login" || location.pathname === "/register") {
-      navigagte(-1);
-    }
-  }, [auth.user]);
+  }, [jwt]);
+
+  // useEffect(() => {
+  //   if (auth.user) {
+  //     handleClose();
+  //   }
+  //   if (location.pathname === "/login" || location.pathname === "/register") {
+  //     navigagte(-1);
+  //   }
+  // }, [auth.user]);
 
   const HandleToProduct = () => {
     navigagte("/product");
@@ -383,7 +384,7 @@ export default function Navigation() {
                   <span className="sr-only">Coolmate</span>
                   <img
                     className="h-8 w-auto"
-                    src="https://static.coolmate.me/images/logo-coolmate-v2.svg"
+                    src="https://www.coolmate.me/images/logo-coolmate-v2.svg"
                     alt=""
                   />
                 </a>
