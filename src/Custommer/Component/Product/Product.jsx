@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
@@ -11,6 +11,7 @@ import {
 import ProductCard from "./ProductCard";
 import { coolmate } from "../../../Data/coolmate";
 import { useNavigate } from "react-router-dom";
+import { api } from "../../../config/apiConfig";
 
 const sortOptions = [
   { name: "Most Popular", href: "#", current: true },
@@ -69,6 +70,16 @@ function classNames(...classes) {
 }
 
 export default function Product() {
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await api.get(`/product`);
+      console.log(data.data.content);
+      setProducts(data.data.content);
+    };
+    fetchData();
+  }, []);
+
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -341,9 +352,10 @@ export default function Product() {
                 <div
                   onClick={handlClickToProductDetail}
                   className="flex flex-wrap justify-center bg-white py-5">
-                  {coolmate.map((item) => (
-                    <ProductCard key={item.id} product={item} />
-                  ))}
+                  {products &&
+                    products.map((item) => (
+                      <ProductCard key={item.id} product={item} />
+                    ))}
                 </div>
               </div>
             </div>
