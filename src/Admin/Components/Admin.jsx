@@ -5,6 +5,7 @@ function Admin() {
   return (
     <div>
       <h1>Admin</h1>
+      <h2>wqdqw</h2>
     </div>
   );
 }
