@@ -5,9 +5,6 @@ function Admin() {
   return (
     <div>
       <h1>Admin</h1>
-      {/* Code start */}
-      {/* code start 1 */}
-      {/* code end */}
     </div>
   );
 }
