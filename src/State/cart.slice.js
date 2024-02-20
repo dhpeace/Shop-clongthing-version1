@@ -24,6 +24,19 @@ export const fetchGetCartUser = createAsyncThunk("cartv2/getCartUser", async () 
     }
 })
 
+export const fetchAddToCart = createAsyncThunk("cartv2/addToCart", async (_, { getState }) => {
+    const state = getState()
+    // Lấy state của slice cartv2
+    const { userId, items } = state.cartv2
+
+    const a = await api.post("/cart/add-to-cart", { userId, items: items.map((v) => ({ ...v, oldQuantity: 0 })) })
+
+    console.log("cartv2::::", a)
+    return a.data.data
+
+    // Sử dụng state ở đây để gửi request API hoặc thực hiện các xử lý khác
+})
+
 const CartSlice = createSlice({
     name: "cartv2",
     initialState: {
@@ -33,9 +46,24 @@ const CartSlice = createSlice({
     },
     reducers: {
         addToCart: (state, action) => {
-            state.id = action.payload.id
-            state.userId = action.payload.userId
-            state.items = action.payload.items
+            console.log("cccc", action.payload)
+            const { productVariationId, price, quantity } = action.payload
+            // let items = state.items
+
+            const indexProductInCart = state.items.length > 0 ? state.items.findIndex((v) => v.productVariationId === productVariationId) : -1
+            indexProductInCart !== -1
+                ? (state.items[indexProductInCart].quantity += quantity)
+                : state.items.push({ productVariationId, quantity, price })
+
+            // items.filter((v) => {
+            //     if (v.productVariationId === productVariationId) return true
+            // })
+
+            //
+            // const { product, quantity, price } = action.payload
+            // state.id = action.payload.id
+            // state.userId = action.payload.userId
+            // state.items = action.payload.items
         },
     },
     extraReducers: (builder) => {
@@ -48,6 +76,12 @@ const CartSlice = createSlice({
                 console.log(action.error)
             })
             .addCase(fetchGetCartUser.fulfilled, (state, action) => {
+                // state.status = StatusState.SUCCESS
+                state.id = action.payload.id
+                state.userId = action.payload.userId
+                state.items = action.payload.items
+            })
+            .addCase(fetchAddToCart.fulfilled, (state, action) => {
                 // state.status = StatusState.SUCCESS
                 state.id = action.payload.id
                 state.userId = action.payload.userId

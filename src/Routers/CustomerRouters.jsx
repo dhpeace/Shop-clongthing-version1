@@ -12,8 +12,20 @@ import Product from "../Custommer/Component/Product/Product"
 import PaymentSucsecss from "../Custommer/Component/Payment/PaymentSucsecss"
 import Order from "../Custommer/Component/Order/Order"
 import OrderDetails from "../Custommer/Component/Order/OrderDetails"
+import { useDispatch } from "react-redux"
+import { fetchInfo } from "../State/auth.slice"
+import { fetchGetCartUser } from "../State/cart.slice"
 
 function CustomerRouters() {
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        const fetch = async () => {
+            await dispatch(fetchInfo())
+            await dispatch(fetchGetCartUser())
+        }
+        fetch()
+    }, [])
     return (
         <div>
             <div>

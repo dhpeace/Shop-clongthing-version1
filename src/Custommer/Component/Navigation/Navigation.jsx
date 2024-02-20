@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from "react"
 import { Dialog, Popover, Tab, Transition } from "@headlessui/react"
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from "@heroicons/react/24/outline"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import AuthModal from "../Auth/AuthModal"
 import { useDispatch, useSelector } from "react-redux"
 import { getUser } from "../../../State/Auth/Action"
@@ -523,7 +523,7 @@ export default function Navigation() {
 
                                 {/* Cart */}
                                 <div className="ml-4 flow-root lg:ml-6">
-                                    <a href="#" className="group -m-2 flex items-center p-2">
+                                    <Link to={"/cart"} className="group -m-2 flex items-center p-2">
                                         <ShoppingBagIcon
                                             className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
                                             aria-hidden="true"
@@ -532,7 +532,7 @@ export default function Navigation() {
                                             {cart && cart.totalCount}
                                         </span>
                                         <span className="sr-only">items in cart, view bag</span>
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
