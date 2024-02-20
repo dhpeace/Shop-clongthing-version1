@@ -8,7 +8,9 @@ function OrderSumary() {
   const navigate = useNavigate();
   const handleCheckout = () => {
     navigate("/checkout");
+    // dispatch(createPayment(orderId));
   };
+
   return (
     <div>
       <div className="p-5 shadow-lg rounded-s-md border">
