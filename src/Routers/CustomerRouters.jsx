@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React from "react"
+import React, { useEffect } from "react"
 import { Route, Routes } from "react-router-dom"
 
 import ProductDetail from "../Custommer/Component/ProductDetail/ProductDetail"
@@ -9,8 +9,17 @@ import Cart from "../Custommer/Component/Cart/Cart"
 import Navigation from "../Custommer/Component/Navigation/Navigation"
 import Footer from "../Custommer/Component/Footer/Footer"
 import Product from "../Custommer/Component/Product/Product"
+import { useDispatch } from "react-redux"
+import { fetchInfo } from "../State/auth.slice"
 
 function CustomerRouters() {
+    const dispatch = useDispatch()
+    useEffect(() => {
+        const fetch = async () => {
+            await dispatch(fetchInfo())
+        }
+        fetch()
+    }, [])
     return (
         <div>
             <div>

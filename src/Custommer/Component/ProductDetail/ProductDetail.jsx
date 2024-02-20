@@ -64,8 +64,6 @@ export default function ProductDetail() {
     const { id } = useParams()
 
     const [product, setProducts] = useState({})
-    // const [colors, setColors] = useState([])
-    // const [size, setSize] = useState([])
     const [selectedColor, setSelectedColor] = useState(null)
     const [selectedSize, setSelectedSize] = useState(null)
     const navigate = useNavigate()
@@ -134,7 +132,7 @@ export default function ProductDetail() {
                                         key={index}
                                         className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg max-w-[4rem] max-h-[4rem] mt-2 transition duration-500 ease-in-out transform hover:shadow-lg"
                                     >
-                                        <img src={image.src} alt={image.alt} className="h-full w-full object-cover object-center" />
+                                        <img src={image} alt={image} className="h-full w-full object-cover object-center" />
                                     </div>
                                 ))}
                         </div>
