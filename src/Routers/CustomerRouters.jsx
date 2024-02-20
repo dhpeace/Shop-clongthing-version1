@@ -9,6 +9,9 @@ import Cart from "../Custommer/Component/Cart/Cart";
 import Navigation from "../Custommer/Component/Navigation/Navigation";
 import Footer from "../Custommer/Component/Footer/Footer";
 import Product from "../Custommer/Component/Product/Product";
+import PaymentSucsecss from "../Custommer/Component/Payment/PaymentSucsecss";
+import Order from "../Custommer/Component/Order/Order";
+import OrderDetails from "../Custommer/Component/Order/OrderDetails";
 
 function CustomerRouters() {
   return (
@@ -24,6 +27,9 @@ function CustomerRouters() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/product" element={<Product />} />
         <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/acount/order/" element={<Order />} />
+        <Route path="/acount/order/:orderId" element={<OrderDetails />} />
+        <Route path="/payment/:orderId" element={<PaymentSucsecss />} />
       </Routes>
       <div>
         <Footer />
