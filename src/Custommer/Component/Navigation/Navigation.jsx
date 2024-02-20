@@ -6,6 +6,9 @@ import AuthModal from "../Auth/AuthModal"
 import { useDispatch, useSelector } from "react-redux"
 import { getUser } from "../../../State/Auth/Action"
 import { fetchInfo, selectAuth } from "../../../State/auth.slice"
+import { current } from "immer"
+import { createSelector } from "reselect"
+import { selectCart } from "../../../State/cart.slice"
 
 const navigation = {
     categories: [
@@ -139,6 +142,16 @@ export default function Navigation() {
     // ks
 
     const currentUser = useSelector(selectAuth.selectCurrentUser)
+    const { items, userId, id } = useSelector(selectCart.selectCart)
+
+    let cart = {}
+    // console.log("cart", cart)
+    if (items) {
+        // console.log(cart)
+        const a = items.map((v) => v.quantity).reduce((total, v) => total + v, 0)
+        console.log("tongggggg", a)
+        cart = { ...items, totalCount: a }
+    }
 
     console.log(currentUser)
 
@@ -461,30 +474,29 @@ export default function Navigation() {
 
                             <div className="ml-auto flex items-center">
                                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                                    {/* <a
-                    href="#"
-                    className="text-sm font-medium text-gray-700 hover:text-gray-800">
-                    Đăng nhập
-                  </a> */}
+                                    {/* <a href="#" className="text-sm font-medium text-gray-700 hover:text-gray-800">
+                                        Đăng nhập
+                                    </a> */}
                                     <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
                                     {currentUser ? (
-                                        <>
+                                        <div onClick={handleOpen}>
+                                            <img src={currentUser.image} width={30} height={30} className="rounded-3xl" alt="" />
                                             <h1>{currentUser?.name}</h1>
-                                        </>
+                                        </div>
                                     ) : (
                                         <>
-                                            <h1>{currentUser?.name}</h1>
+                                            {/* <h1>{currentUser?.name}</h1> */}
 
                                             <div className="flow-root">
-                                                <a href="#" className="-m-2 block p-2 font-medium text-gray-900">
+                                                <a href="#" className="-m-2 block p-2 font-medium text-gray-900" onClick={handleOpen}>
                                                     Sign in
                                                 </a>
                                             </div>
-                                            <div className="flow-root">
+                                            {/* <div className="flow-root">
                                                 <a href="#" className="-m-2 block p-2 font-medium text-gray-900">
                                                     Create account
                                                 </a>
-                                            </div>
+                                            </div> */}
                                         </>
                                     )}
                                 </div>
@@ -516,7 +528,9 @@ export default function Navigation() {
                                             className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
                                             aria-hidden="true"
                                         />
-                                        <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">0</span>
+                                        <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
+                                            {cart && cart.totalCount}
+                                        </span>
                                         <span className="sr-only">items in cart, view bag</span>
                                     </a>
                                 </div>

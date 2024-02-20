@@ -7,6 +7,9 @@ import { coolmate } from "../../../Data/coolmate"
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard"
 import { api } from "../../../config/apiConfig"
 import productService from "../../../service/product.service"
+import { useSelect } from "@mui/base"
+import { useSelector } from "react-redux"
+import { authAction, selectAuth } from "../../../State/auth.slice"
 
 const highlights = ["Hand cut and sewn locally", "Dyed with our proprietary colors", "Pre-washed & pre-shrunk", "Ultra-soft 100% cotton"]
 const details =
@@ -63,6 +66,8 @@ function classNames(...classes) {
 export default function ProductDetail() {
     const { id } = useParams()
 
+    const currentUser = useSelector(selectAuth.selectCurrentUser)
+
     const [product, setProducts] = useState({})
     const [selectedColor, setSelectedColor] = useState(null)
     const [selectedSize, setSelectedSize] = useState(null)
@@ -83,6 +88,10 @@ export default function ProductDetail() {
     }, [id])
 
     const handleAddToCart = () => {
+        // check user and handle create userMod
+        if (currentUser) {
+        }
+
         navigate("/cart")
     }
 

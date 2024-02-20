@@ -11,12 +11,14 @@ import Footer from "../Custommer/Component/Footer/Footer"
 import Product from "../Custommer/Component/Product/Product"
 import { useDispatch } from "react-redux"
 import { fetchInfo } from "../State/auth.slice"
+import { fetchGetCartUser } from "../State/cart.slice"
 
 function CustomerRouters() {
     const dispatch = useDispatch()
     useEffect(() => {
         const fetch = async () => {
             await dispatch(fetchInfo())
+            await dispatch(fetchGetCartUser())
         }
         fetch()
     }, [])
