@@ -7,7 +7,7 @@ import { deepPurple } from "@mui/material/colors";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 
 function OrderDetails() {
-    // ffff
+    // 
   return (
     <div className="px:5 lg:px-20">
       <div>
