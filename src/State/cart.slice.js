@@ -18,7 +18,6 @@ import { getUserId } from "../utils/authUtils"
 export const fetchGetCartUser = createAsyncThunk("cartv2/getCartUser", async () => {
     const a = getUserId()
     if (a) {
-        console.log(a)
         const b = await api.get(`/cart/${a}`)
         return b.data.data
     }
@@ -31,7 +30,6 @@ export const fetchAddToCart = createAsyncThunk("cartv2/addToCart", async (_, { g
 
     const a = await api.post("/cart/add-to-cart", { userId, items: items.map((v) => ({ ...v, oldQuantity: 0 })) })
 
-    console.log("cartv2::::", a)
     return a.data.data
 
     // Sử dụng state ở đây để gửi request API hoặc thực hiện các xử lý khác
@@ -46,7 +44,6 @@ const CartSlice = createSlice({
     },
     reducers: {
         addToCart: (state, action) => {
-            console.log("cccc", action.payload)
             const { productVariationId, price, quantity } = action.payload
             // let items = state.items
 
@@ -65,6 +62,9 @@ const CartSlice = createSlice({
             // state.userId = action.payload.userId
             // state.items = action.payload.items
         },
+        setUserId: (state, action) => {
+            state.userId = action.payload
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -73,7 +73,6 @@ const CartSlice = createSlice({
             })
             .addCase(fetchGetCartUser.rejected, (state, action) => {
                 // state.status = StatusState.FAIL
-                console.log(action.error)
             })
             .addCase(fetchGetCartUser.fulfilled, (state, action) => {
                 // state.status = StatusState.SUCCESS
@@ -96,7 +95,6 @@ const cartAction = CartSlice.actions
 // export select
 const selectCart = {
     selectCart: (state) => {
-        console.log(state)
         return state.cartv2
     },
 }

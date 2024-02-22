@@ -28,7 +28,6 @@ const checkoutSlice = createSlice({
     },
     reducers: {
         add: (state, action) => {
-            console.log("cccc", action.payload)
             state.checkout = action.payload
         },
     },
@@ -39,7 +38,6 @@ const checkoutAction = checkoutSlice.actions
 
 // export select
 const selectCheckout = (state) => {
-    console.log(state)
     return state.checkout.checkout
 }
 

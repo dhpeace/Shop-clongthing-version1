@@ -19,10 +19,8 @@ export default function Checkout() {
     const navigate = useNavigate()
     const currentUser = useSelector(selectAuth.selectCurrentUser)
     const checkout = useSelector(selectCheckout)
-    console.log("checkout", checkout)
 
     const cart = useSelector(selectCart.selectCart)
-    console.log(currentUser)
     const [address, setAddress] = useState()
 
     return (

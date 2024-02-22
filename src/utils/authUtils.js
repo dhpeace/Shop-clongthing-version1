@@ -1,20 +1,28 @@
+const userId = "user-id"
+const accsesToken = "access-token"
+const refeshToken = "refesh-token"
+
 const getAccessToken = () => {
-    return localStorage.getItem("access-token")
+    return localStorage.getItem(accsesToken)
 }
 const getRefeshToken = () => {
-    return localStorage.getItem("refesh-token")
+    return localStorage.getItem(refeshToken)
 }
 const getUserId = () => {
-    return localStorage.getItem("user-id")
+    return localStorage.getItem(userId)
+}
+
+const removeAccessToken = () => {
+    localStorage.removeItem(accsesToken)
 }
 
 const setAccessToken = (a) => {
-    return localStorage.setItem("access-token", a)
+    return localStorage.setItem(accsesToken, a)
 }
 const setRefeshToken = (a) => {
-    return localStorage.setItem("refesh-token", a)
+    return localStorage.setItem(refeshToken, a)
 }
 const setUserId = (a) => {
-    return localStorage.setItem("user-id", a)
+    return localStorage.setItem(userId, a)
 }
-export { getAccessToken, getRefeshToken, getUserId, setAccessToken, setUserId, setRefeshToken }
+export { getAccessToken, getRefeshToken, getUserId, setAccessToken, setUserId, setRefeshToken, removeAccessToken }

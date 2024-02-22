@@ -13,6 +13,9 @@ import { authAction, selectAuth } from "../../../State/auth.slice"
 import { cartAction, fetchAddToCart } from "../../../State/cart.slice"
 import { sizeWidth } from "@mui/system"
 import { toast } from "react-toastify"
+import cln from "classnames"
+import { Air } from "@mui/icons-material"
+import { getUserId, removeAccessToken, setUserId } from "../../../utils/authUtils"
 
 const highlights = ["Hand cut and sewn locally", "Dyed with our proprietary colors", "Pre-washed & pre-shrunk", "Ultra-soft 100% cotton"]
 const details =
@@ -60,7 +63,7 @@ const details =
 //         'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
 // }
 
-const cl = classNames.bind()
+const cl = cln.bind()
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ")
@@ -71,14 +74,12 @@ export default function ProductDetail() {
 
     const dispatch = useDispatch()
 
-    const currentUser = useSelector(selectAuth.selectCurrentUser)
     const [variation, setVariation] = useState(null)
     const [product, setProduct] = useState(null)
 
     const [selectedColor, setSelectedColor] = useState(null)
     const [selectedSize, setSelectedSize] = useState(null)
 
-    console.log(product)
     useEffect(() => {
         const fetch = async () => {
             const a = await api.get(`/product/${id}`)
@@ -94,23 +95,29 @@ export default function ProductDetail() {
 
     useEffect(() => {
         if (selectedSize && selectedColor) {
-            console.log(product.variations)
-            const a = product.variations.filter((v) => v.color === selectedColor && v.size == selectedSize)
-            console.log(a)
-            setVariation(a[0].id)
+            const a = product.variations.find((v) => v.color === selectedColor && v.size == selectedSize)
+            if (!a) {
+                // toast(`${selectedColor} & ${selectedSize} het hang`)
+                setVariation(null)
+            } else {
+                setVariation(a.id)
+            }
         }
     })
-    console.log(variation)
 
     const handleAddToCart = async () => {
         // check variaton
+        if (!variation && selectedColor && selectedSize) {
+            toast(`${selectedColor} & ${selectedSize} het hang`)
+            return
+        }
         if (!variation) {
             toast("vui long chon mau va size")
             return
         }
 
         // check user and handle create userMod
-        if (currentUser) {
+        if (getUserId() !== null && getUserId() !== "") {
             dispatch(
                 cartAction.addToCart({
                     productVariationId: variation,
@@ -121,7 +128,12 @@ export default function ProductDetail() {
             await dispatch(fetchAddToCart())
             toast("add cart is success")
         } else {
-            console.log("ccc")
+            removeAccessToken()
+            const a = await api.get("/auth/create-user-mod")
+            console.log("mod", a.data)
+            setUserId(a.data.data.id)
+            dispatch(cartAction.setUserId(a.data.data.id))
+            handleAddToCart()
         }
 
         // navigate("/cart")
@@ -237,9 +249,11 @@ export default function ProductDetail() {
                                                     <RadioGroup.Label as="span" className="sr-only">
                                                         {`bg-${color}-500`}
                                                     </RadioGroup.Label>
+
                                                     <span
                                                         // aria-hidden="true"
-                                                        className={cl(`h-8 w-8 rounded-full border border-black border-opacity-10 bg-${color}-500`)}
+                                                        className={cl(`h-8 w-8 rounded-full border border-black border-opacity-10`)}
+                                                        style={{ backgroundColor: color }}
                                                     />
                                                 </RadioGroup.Option>
                                             ))}
@@ -312,7 +326,11 @@ export default function ProductDetail() {
                             </div>
                             <button
                                 onClick={handleAddToCart}
-                                className="mt-4 w-full bg-gray-700 text-white hover:text-black py-2 rounded-md hover:bg-gray-300 focus:outline-none"
+                                // disabled={!variation}
+                                className={cl(
+                                    "mt-4 w-full bg-gray-700 text-white hover:text-black py-2 rounded-md hover:bg-gray-300 focus:outline-none"
+                                    // { "bg-gray-300 text-black": !variation }
+                                )}
                             >
                                 Thêm giỏ hàng
                             </button>

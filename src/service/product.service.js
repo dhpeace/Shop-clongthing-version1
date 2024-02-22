@@ -1,7 +1,6 @@
 const productService = {
     getAllColorOfProduct: (product) => {
         const { variations } = product
-        console.log(variations)
         if (variations) {
             return variations.map((v) => v.color).filter((value, index, self) => self.indexOf(value) === index)
         }

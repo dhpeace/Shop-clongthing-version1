@@ -1,77 +1,115 @@
-import { Fragment, useEffect, useState } from "react"
+import { Fragment, useEffect, useRef, useState } from "react"
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react"
 import { XMarkIcon } from "@heroicons/react/24/outline"
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid"
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import ChevronRightIcon from "@mui/icons-material/ChevronRight"
 import ProductCard from "./ProductCard"
 import { useNavigate } from "react-router-dom"
 import { api } from "../../../config/apiConfig"
+import { TreeView } from "@mui/x-tree-view/TreeView"
+import { TreeItem } from "@mui/x-tree-view/TreeItem"
+import cln from "classnames"
+import Pagination from "../../nComponent/Pagination"
+import { current } from "@reduxjs/toolkit"
+import { toast } from "react-toastify"
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
+import { IoIosSearch } from "react-icons/io"
 
 const sortOptions = [
-    { name: "Most Popular", href: "#", current: true },
-    { name: "Best Rating", href: "#", current: false },
-    { name: "Newest", href: "#", current: false },
-    { name: "Price: Low to High", href: "#", current: false },
-    { name: "Price: High to Low", href: "#", current: false },
+    { name: "default", value: "name,asc" },
+    { name: "Best Rating", value: "id" },
+    { name: "Newest", value: "name,desc" },
+    { name: "Price: Low to High", value: "price,asc" },
+    { name: "Price: High to Low", value: "price,desc" },
 ]
-const subCategories = [
-    { name: "Totes", href: "#" },
-    { name: "Backpacks", href: "#" },
-    { name: "Travel Bags", href: "#" },
-    { name: "Hip Bags", href: "#" },
-    { name: "Laptop Sleeves", href: "#" },
-]
-const filters = [
-    {
-        id: "color",
-        name: "Color",
-        options: [
-            { value: "white", label: "White", checked: false },
-            { value: "beige", label: "Beige", checked: false },
-            { value: "blue", label: "Blue", checked: true },
-            { value: "brown", label: "Brown", checked: false },
-            { value: "green", label: "Green", checked: false },
-            { value: "purple", label: "Purple", checked: false },
-        ],
-    },
-    {
-        id: "category",
-        name: "Category",
-        options: [
-            { value: "new-arrivals", label: "New Arrivals", checked: false },
-            { value: "sale", label: "Sale", checked: false },
-            { value: "travel", label: "Travel", checked: true },
-            { value: "organization", label: "Organization", checked: false },
-            { value: "accessories", label: "Accessories", checked: false },
-        ],
-    },
-    {
-        id: "size",
-        name: "Size",
-        options: [
-            { value: "2l", label: "2L", checked: false },
-            { value: "6l", label: "6L", checked: false },
-            { value: "12l", label: "12L", checked: false },
-            { value: "18l", label: "18L", checked: false },
-            { value: "20l", label: "20L", checked: false },
-            { value: "40l", label: "40L", checked: true },
-        ],
-    },
-]
+const cl = cln.bind()
 
-function classNames(...classes) {
-    return classes.filter(Boolean).join(" ")
+const getAllColorOrSizeOfProducts = (products, type) => {
+    if (products) {
+        let all = []
+        // Duyệt qua mảng sản phẩm
+        products.forEach((product) => {
+            product.variations.forEach((variation) => {
+                if (!all.includes(variation[type])) {
+                    all.push(variation[type])
+                }
+            })
+        })
+        return all
+    }
 }
-
+const queryInitialState = {
+    page: 0,
+    size: 6,
+    categoryId: null,
+    keySearch: null,
+    color: null,
+    sizee: null,
+    minPrice: null,
+    maxPrice: null,
+    sort: null,
+}
 export default function Product() {
+    const inputRef = useRef()
+
+    const [query, setQuery] = useState(queryInitialState)
+
+    const [totalPage, setTotalPage] = useState(null)
+    // const [price, setPrice] = useState({ minPrice: null, maxPrice: null })
+
+    console.log("query", query)
+
     const [products, setProducts] = useState([])
+    const [categories, setCategoties] = useState()
+    console.log("products", products)
+    // const [selectCate, setSelectCate] = useState(null)
+    useEffect(() => {
+        const fetch = async () => {
+            const a = await api.get("/category")
+            const child = a.data.data.filter((v) => v.parentId !== null)
+            const parent = a.data.data.filter((v) => v.parentId === null)
+            setCategoties(
+                parent.map((v) => ({
+                    ...v,
+                    child: child.filter((c) => c.parentId === v.id),
+                }))
+            )
+        }
+        fetch()
+    }, [])
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await api.get(`/product`)
-            console.log(data.data.content)
-            setProducts(data.data.content)
+            let params = Object.keys(query)
+                .filter((key) => query[key])
+                .map((key) => `${key}=${query[key]}`)
+                .join("&")
+            console.log("params", params)
+            params = params ? `?${params}` : null
+
+            try {
+                const a = await api.get(`/product${params}`)
+                console.log("data", a)
+                const data = a.data
+                const option = {
+                    page: data.data.currentPage,
+                    size: data.data.pageSize,
+                    totalPage: data.data.totalPage,
+                    // totalElement: data.data.totalElement,
+                }
+
+                console.log("option", option)
+                console.log(data.data.content)
+
+                setQuery((prev) => ({ ...prev, page: option.page, size: option.size }))
+                setTotalPage(option.totalPage)
+                setProducts(data.data.content)
+            } catch (error) {
+                toast(error.respone)
+            }
         }
         fetchData()
-    }, [])
+    }, [...Object.keys(query).map((key) => query[key])])
 
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
     const navigate = useNavigate()
@@ -79,158 +117,57 @@ export default function Product() {
     const handlClickToProductDetail = (product) => {
         navigate(`/product/${product.id}`)
     }
+    const hanglePaginationChange = ({ page, pageSize }) => {
+        setQuery((prev) => ({ ...prev, page: page - 1, size: pageSize }))
+    }
 
     return (
         <div className="bg-white">
             <div>
-                {/* Mobile filter dialog */}
-                <Transition.Root show={mobileFiltersOpen} as={Fragment}>
-                    <Dialog as="div" className="relative z-40 lg:hidden" onClose={setMobileFiltersOpen}>
-                        <Transition.Child
-                            as={Fragment}
-                            enter="transition-opacity ease-linear duration-300"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
-                            leave="transition-opacity ease-linear duration-300"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
-                        >
-                            <div className="fixed inset-0 bg-black bg-opacity-25" />
-                        </Transition.Child>
-
-                        <div className="fixed inset-0 z-40 flex">
-                            <Transition.Child
-                                as={Fragment}
-                                enter="transition ease-in-out duration-300 transform"
-                                enterFrom="translate-x-full"
-                                enterTo="translate-x-0"
-                                leave="transition ease-in-out duration-300 transform"
-                                leaveFrom="translate-x-0"
-                                leaveTo="translate-x-full"
-                            >
-                                <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl">
-                                    <div className="flex items-center justify-between px-4">
-                                        <h2 className="text-lg font-medium text-gray-900">Filters</h2>
-                                        <button
-                                            type="button"
-                                            className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-400"
-                                            onClick={() => setMobileFiltersOpen(false)}
-                                        >
-                                            <span className="sr-only">Close menu</span>
-                                            <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                                        </button>
-                                    </div>
-
-                                    {/* Filters */}
-                                    <form className="mt-4 border-t border-gray-200">
-                                        <h3 className="sr-only">Categories</h3>
-                                        <ul role="list" className="px-2 py-3 font-medium text-gray-900">
-                                            {subCategories.map((category) => (
-                                                <li key={category.name}>
-                                                    <a href={category.href} className="block px-2 py-3">
-                                                        {category.name}
-                                                    </a>
-                                                </li>
-                                            ))}
-                                        </ul>
-
-                                        {filters.map((section) => (
-                                            <Disclosure as="div" key={section.id} className="border-t border-gray-200 px-4 py-6">
-                                                {({ open }) => (
-                                                    <>
-                                                        <h3 className="-mx-2 -my-3 flow-root">
-                                                            <Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
-                                                                <span className="font-medium text-gray-900">{section.name}</span>
-                                                                <span className="ml-6 flex items-center">
-                                                                    {open ? (
-                                                                        <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                                                                    ) : (
-                                                                        <PlusIcon className="h-5 w-5" aria-hidden="true" />
-                                                                    )}
-                                                                </span>
-                                                            </Disclosure.Button>
-                                                        </h3>
-                                                        <Disclosure.Panel className="pt-6">
-                                                            <div className="space-y-6">
-                                                                {section.options.map((option, optionIdx) => (
-                                                                    <div key={option.value} className="flex items-center">
-                                                                        <input
-                                                                            id={`filter-mobile-${section.id}-${optionIdx}`}
-                                                                            name={`${section.id}[]`}
-                                                                            defaultValue={option.value}
-                                                                            type="checkbox"
-                                                                            defaultChecked={option.checked}
-                                                                            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                                        />
-                                                                        <label
-                                                                            htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
-                                                                            className="ml-3 min-w-0 flex-1 text-gray-500"
-                                                                        >
-                                                                            {option.label}
-                                                                        </label>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        </Disclosure.Panel>
-                                                    </>
-                                                )}
-                                            </Disclosure>
-                                        ))}
-                                    </form>
-                                </Dialog.Panel>
-                            </Transition.Child>
-                        </div>
-                    </Dialog>
-                </Transition.Root>
-
                 <main className="mx-auto px-4 sm:px-6 lg:px-20">
                     <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
-                        <h1 className="text-4xl font-bold tracking-tight text-gray-900">New Arrivals</h1>
+                        <div className="flex space-x-6">
+                            <h1 className="text-4xl font-bold tracking-tight text-gray-900">New Arrivals</h1>
+                            <Button
+                                variant="contained"
+                                size="small"
+                                onClick={() => setQuery((prev) => ({ ...queryInitialState, page: prev.page, size: prev.size }))}
+                            >
+                                All
+                            </Button>
+                        </div>
+
+                        <div className="relative text-gray-600 flex justify-center items-center">
+                            <input
+                                ref={inputRef}
+                                onChange={(e) => setQuery((prev) => ({ ...prev, keySearch: e.target.value === "" ? null : e.target.value, page: 0 }))}
+                                value={!query?.keySearch ? "" : query?.keySearch}
+                                type="search"
+                                placeholder="Search"
+                                className="bg-white h-10 px-5 pr-10 border border-black/25 rounded-full text-sm focus:outline-none focus-within:border-blue-500 transition-transform duration-300"
+                            />
+                            <button type="submit" className="absolute right-0 top-0 mt-3 mr-4">
+                                <IoIosSearch />
+                            </button>
+                        </div>
 
                         <div className="flex items-center">
-                            <Menu as="div" className="relative inline-block text-left">
-                                <div>
-                                    <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                                        Sort
-                                        <ChevronDownIcon
-                                            className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                                            aria-hidden="true"
-                                        />
-                                    </Menu.Button>
-                                </div>
-
-                                <Transition
-                                    as={Fragment}
-                                    enter="transition ease-out duration-100"
-                                    enterFrom="transform opacity-0 scale-95"
-                                    enterTo="transform opacity-100 scale-100"
-                                    leave="transition ease-in duration-75"
-                                    leaveFrom="transform opacity-100 scale-100"
-                                    leaveTo="transform opacity-0 scale-95"
+                            <FormControl sx={{ m: 1, minWidth: 120 }} size="small" className="w-full">
+                                <InputLabel id="demo-select-small-label">sort</InputLabel>
+                                <Select
+                                    labelId="demo-select-small-label"
+                                    id="demo-select-small"
+                                    value={query?.sort}
+                                    label="size"
+                                    onChange={(e) => setQuery((prev) => ({ ...prev, sort: e.target.value === "" ? null : e.target.value, page: 0 }))}
                                 >
-                                    <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                        <div className="py-1">
-                                            {sortOptions.map((option) => (
-                                                <Menu.Item key={option.name}>
-                                                    {({ active }) => (
-                                                        <a
-                                                            href={option.href}
-                                                            className={classNames(
-                                                                option.current ? "font-medium text-gray-900" : "text-gray-500",
-                                                                active ? "bg-gray-100" : "",
-                                                                "block px-4 py-2 text-sm"
-                                                            )}
-                                                        >
-                                                            {option.name}
-                                                        </a>
-                                                    )}
-                                                </Menu.Item>
-                                            ))}
-                                        </div>
-                                    </Menu.Items>
-                                </Transition>
-                            </Menu>
-
+                                    {sortOptions.map(({ name, value }) => (
+                                        <MenuItem key={name} value={value}>
+                                            {name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
                             <button type="button" className="-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7">
                                 <span className="sr-only">View grid</span>
                                 <Squares2X2Icon className="h-5 w-5" aria-hidden="true" />
@@ -256,66 +193,165 @@ export default function Product() {
                             <form className="hidden lg:block">
                                 <h3 className="sr-only">Categories</h3>
                                 <ul role="list" className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900">
-                                    {subCategories.map((category) => (
-                                        <li key={category.name}>
-                                            <a href={category.href}>{category.name}</a>
-                                        </li>
-                                    ))}
+                                    <div>
+                                        <TreeView
+                                            aria-label="file system navigator"
+                                            defaultCollapseIcon={<ExpandMoreIcon />}
+                                            defaultExpandIcon={<ChevronRightIcon />}
+                                            sx={{ height: 240, flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
+                                            onNodeSelect={(e, node) => setQuery((prev) => ({ ...prev, categoryId: node, page: 0 }))}
+                                            defaultChecked={query?.categoryId}
+                                        >
+                                            {categories &&
+                                                categories.map((v) => (
+                                                    <TreeItem
+                                                        key={v.id}
+                                                        nodeId={v.id}
+                                                        label={<p className={cl({ "text-red-500": query?.categoryId === v.id })}>{v.title}</p>}
+                                                    >
+                                                        {v.child &&
+                                                            v.child.map((c) => (
+                                                                <TreeItem
+                                                                    key={c.id}
+                                                                    nodeId={c.id}
+                                                                    label={
+                                                                        <p className={cl({ "text-red-500": query?.categoryId === c.id })}>
+                                                                            {c.title}
+                                                                        </p>
+                                                                    }
+                                                                ></TreeItem>
+                                                            ))}
+                                                    </TreeItem>
+                                                ))}
+                                        </TreeView>
+                                    </div>
                                 </ul>
 
-                                {filters.map((section) => (
-                                    <Disclosure as="div" key={section.id} className="border-b border-gray-200 py-6">
-                                        {({ open }) => (
-                                            <>
-                                                <h3 className="-my-3 flow-root">
-                                                    <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                                                        <span className="font-medium text-gray-900">{section.name}</span>
-                                                        <span className="ml-6 flex items-center">
-                                                            {open ? (
-                                                                <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                                                            ) : (
-                                                                <PlusIcon className="h-5 w-5" aria-hidden="true" />
-                                                            )}
-                                                        </span>
-                                                    </Disclosure.Button>
-                                                </h3>
-                                                <Disclosure.Panel className="pt-6">
-                                                    <div className="space-y-4">
-                                                        {section.options.map((option, optionIdx) => (
-                                                            <div key={option.value} className="flex items-center">
-                                                                <input
-                                                                    id={`filter-${section.id}-${optionIdx}`}
-                                                                    name={`${section.id}[]`}
-                                                                    defaultValue={option.value}
-                                                                    type="checkbox"
-                                                                    defaultChecked={option.checked}
-                                                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                                />
-                                                                <label
-                                                                    htmlFor={`filter-${section.id}-${optionIdx}`}
-                                                                    className="ml-3 text-sm text-gray-600"
-                                                                >
-                                                                    {option.label}
-                                                                </label>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </Disclosure.Panel>
-                                            </>
-                                        )}
-                                    </Disclosure>
-                                ))}
+                                {/* color size price */}
+                                <div className="mt-3">
+                                    <FormControl sx={{ m: 1, minWidth: 120 }} size="small" className="w-full">
+                                        <InputLabel id="demo-select-small-label">Color</InputLabel>
+                                        <Select
+                                            labelId="demo-select-small-label"
+                                            id="demo-select-small"
+                                            value={query?.color}
+                                            label="Color"
+                                            onChange={(e) =>
+                                                setQuery((prev) => ({ ...prev, color: e.target.value === "" ? null : e.target.value, page: 0 }))
+                                            }
+                                        >
+                                            <MenuItem value="">none</MenuItem>
+                                            {products &&
+                                                getAllColorOrSizeOfProducts(products, "color").map((v) => (
+                                                    <MenuItem key={v} value={v} style={{ background: v }}>
+                                                        {v}
+                                                    </MenuItem>
+                                                ))}
+                                        </Select>
+                                    </FormControl>
+                                </div>
+                                <div className="mt-3">
+                                    <FormControl sx={{ m: 1, minWidth: 120 }} size="small" className="w-full">
+                                        <InputLabel id="demo-select-small-label">size</InputLabel>
+                                        <Select
+                                            labelId="demo-select-small-label"
+                                            id="demo-select-small"
+                                            value={query?.sizee}
+                                            label="size"
+                                            onChange={(e) =>
+                                                setQuery((prev) => ({ ...prev, sizee: e.target.value === "" ? null : e.target.value, page: 0 }))
+                                            }
+                                        >
+                                            <MenuItem value="">none</MenuItem>
+                                            {products &&
+                                                getAllColorOrSizeOfProducts(products, "size").map((v) => (
+                                                    <MenuItem key={v} value={v} style={{ background: v }}>
+                                                        {v}
+                                                    </MenuItem>
+                                                ))}
+                                        </Select>
+                                    </FormControl>
+                                </div>
+                                <div className="mt-3">
+                                    <div className="flex space-x-4">
+                                        <TextField
+                                            id="outlined-number"
+                                            onChange={(e) =>
+                                                setQuery((prev) => ({
+                                                    ...prev,
+                                                    minPrice: e.target.value !== null ? Number(e.target.value) : null,
+                                                    page: 0,
+                                                }))
+                                            }
+                                            value={query?.minPrice ? query.minPrice : ""}
+                                            label="min price (d)"
+                                            type="number"
+                                            size="small"
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                        />
+                                        <span> - </span>
+                                        <TextField
+                                            id="outlined-number"
+                                            onChange={(e) => {
+                                                console.log("test", e.target.value)
+                                                setQuery((prev) => ({
+                                                    ...prev,
+                                                    maxPrice: e.target.value !== null ? Number(e.target.value) : null,
+                                                    page: 0,
+                                                }))
+                                            }}
+                                            value={query.maxPrice ? query.maxPrice : ""}
+                                            size="small"
+                                            label="max price (d)"
+                                            type="number"
+                                            variant="outlined"
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="mt-2 flex justify-center">
+                                        {/* <Button
+                                            variant="contained"
+                                            onClick={() => {
+                                                if (price.maxPrice !== null || price.minPrice !== null)
+                                                    setQuery((prev) => ({ ...prev, ...price, page: 0 }))
+                                            }}
+                                        >
+                                            ap dung
+                                        </Button> */}
+                                    </div>
+                                </div>
                             </form>
 
                             {/* Product grid */}
-                            <div className="lg:col-span-3 w-full">
-                                <div className="flex flex-wrap justify-center bg-white py-5">
-                                    {products &&
+                            <div className="lg:col-span-3 w-full  ">
+                                <div className="flex items-end justify-end">
+                                    <Pagination
+                                        pageSizelist={[6, 9, 12]}
+                                        page={query.page + 1}
+                                        onChange={hanglePaginationChange}
+                                        totalPage={totalPage}
+                                        pageSize={query.size}
+                                    />
+                                </div>
+                                <div className="flex flex-wrap justify-center bg-slate-50 py-5">
+                                    {products && products.length !== 0 ? (
                                         products.map((item) => (
                                             <div key={item.id} onClick={() => handlClickToProductDetail(item)}>
                                                 <ProductCard product={item} />
                                             </div>
-                                        ))}
+                                        ))
+                                    ) : (
+                                        <h1 className="text-red-800 font-bold text-3xl">
+                                            no product with:
+                                            {Object.keys(query)
+                                                .map((key) => `${key}=${query[key]}`)
+                                                .join("\n")}
+                                        </h1>
+                                    )}
                                 </div>
                             </div>
                         </div>

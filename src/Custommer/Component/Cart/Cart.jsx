@@ -8,6 +8,8 @@ import { api } from "../../../config/apiConfig"
 import { getUserId } from "../../../utils/authUtils"
 import { checkoutAction } from "../../../State/checkout.slice"
 import { toast } from "react-toastify"
+import AuthModal from "../Auth/AuthModal"
+import { selectAuth } from "../../../State/auth.slice"
 
 const style = {
     position: "absolute",
@@ -24,7 +26,9 @@ const style = {
 function Cart() {
     const dispatch = useDispatch()
     const cart = useSelector(selectCart.selectCart)
-    console.log("cart", cart)
+    const [showRegister, setShowRegister] = useState(false)
+
+    const currentUser = useSelector(selectAuth.selectCurrentUser)
 
     const [selectDiscount, setSelectDiscout] = useState(null)
 
@@ -43,24 +47,26 @@ function Cart() {
         fetch()
     }, [total])
 
-    console.log("discount", discounts)
-
     const navigate = useNavigate()
     const handleCheckout = async () => {
         const data = {
             cartId: cart.id,
             userId: cart.userId,
             address: null,
-            discountId: selectDiscount.id,
+            discountId: selectDiscount?.id ? selectDiscount.id : null,
             items: cart.items,
         }
-        console.log(data)
         try {
-            const a = await api.post("/order/checkout-review", data)
-            dispatch(checkoutAction.add(a.data.data))
-            navigate("/checkout")
+            if (currentUser) {
+                const a = await api.post("/order/checkout-review", data)
+                dispatch(checkoutAction.add(a.data.data))
+                navigate("/checkout")
+            } else {
+                toast("plz login or register")
+                setShowRegister(true)
+                console.log("cc")
+            }
         } catch (error) {
-            console.log(error)
             toast(error.response.data.message)
         }
     }
@@ -190,6 +196,15 @@ function Cart() {
                     </div>
                 </Box>
             </Modal>
+
+            <AuthModal
+                open={showRegister}
+                isRegister={true}
+                idUserMod={getUserId()}
+                isConverModToUser={true}
+                urlReturnRegister={"/checkout"}
+                handleClose={() => setShowRegister(false)}
+            ></AuthModal>
         </div>
     )
 }

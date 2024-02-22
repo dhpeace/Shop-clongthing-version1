@@ -15,9 +15,7 @@ function CartItem({ item, onMinus, onPlus, onRemove, isCheckOut = false }) {
         }
         fetch()
     }, [])
-    console.log(product)
     const variation = product && product.variations ? product.variations.find((v) => v.id === item.productVariationId) : {}
-    console.log(variation)
     return (
         <div className="p-5 shadow-lg border rounded-md bg-white">
             <div className="flex space-x-5 ">

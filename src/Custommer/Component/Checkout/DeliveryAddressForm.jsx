@@ -19,7 +19,6 @@ function DeliveryAddressForm() {
       mobile: data.get("phoneNumber"),
     };
 
-    console.log(address);
   };
 
   return (

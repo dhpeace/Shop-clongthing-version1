@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux"
 import { authAction, fetchInfo } from "../../../State/auth.slice"
 import { useState } from "react"
 import { getAccessToken, getUserId } from "../../../utils/authUtils"
+import { getUser } from "../../../State/Auth/Action"
 
 const style = {
     position: "absolute",
@@ -23,7 +24,7 @@ const style = {
     boxShadow: 24,
     p: 4,
 }
-function AuthModal({ handleClose, open, urlReturnLogin = "/", urlReturnRegister = "/" }) {
+function AuthModal({ handleClose, open, isConverModToUser, idUserMod, urlReturnLogin = "/", urlReturnRegister }) {
     const navigate = useNavigate()
     const location = useLocation()
     const dispatch = useDispatch()
@@ -31,7 +32,6 @@ function AuthModal({ handleClose, open, urlReturnLogin = "/", urlReturnRegister 
     const handleOnLogin = async (data) => {
         try {
             const a = await api.post("/auth/login", data)
-            console.log(a.data.data)
             dispatch(authAction.loginSuccess(a.data.data))
             handleClose()
             navigate(urlReturnLogin)
@@ -40,11 +40,33 @@ function AuthModal({ handleClose, open, urlReturnLogin = "/", urlReturnRegister 
             toast(error.response.data.message)
         }
     }
+    const handleOnRegister = async (data) => {
+        try {
+            const url = isConverModToUser ? `conver-mod-to-user/${idUserMod}` : "register"
+            const a = await api.post(`/auth/${url}`, data, {
+                headers: {
+                    "x-client-id": idUserMod,
+                },
+            })
+            dispatch(authAction.loginSuccess(a.data.data))
+            handleClose()
+            navigate(urlReturnRegister)
+        } catch (error) {
+            console.log(error.response)
+            toast(error.response?.data?.data + " " + error.response?.data?.message)
+        }
+    }
 
     return (
         <div>
             <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
-                <Box sx={style}>{location.pathname === "/register" ? <RegisterForm /> : <LoginForm onSubmit={handleOnLogin} />}</Box>
+                <Box sx={style}>
+                    {location.pathname === "/register" || isConverModToUser ? (
+                        <RegisterForm onSubmit={handleOnRegister} />
+                    ) : (
+                        <LoginForm onSubmit={handleOnLogin} />
+                    )}
+                </Box>
             </Modal>
         </div>
     )
@@ -54,6 +76,9 @@ AuthModal.propTypes = {
     handleClose: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     urlReturnLogin: PropTypes.string,
+    isConverModToUser: PropTypes.bool,
+    onRegisterSuccess: PropTypes.func,
+    idUserMod: PropTypes.string,
     urlReturnRegister: PropTypes.string,
 }
 AuthModal.defaultProps = {

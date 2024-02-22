@@ -76,7 +76,6 @@ const authAction = authSlice.actions
 const selectAuth = {
     selectIsLogging: (state) => state.authv2.logging,
     selectCurrentUser: (state) => {
-        console.log(state)
         return state.authv2.currentUser
     },
 }

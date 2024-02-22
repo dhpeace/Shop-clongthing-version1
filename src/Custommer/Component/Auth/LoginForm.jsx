@@ -16,7 +16,6 @@ function LoginForm({ onSubmit }) {
             password: data.get("password"),
         }
         onSubmit && onSubmit(userData)
-        // console.log("userData", userData)
     }
     return (
         <div className="bg-gray-100 p-5 rounded-lg shadow-lg max-w-md mx-auto">

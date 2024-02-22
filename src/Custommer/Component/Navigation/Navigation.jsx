@@ -145,15 +145,10 @@ export default function Navigation() {
     const { items, userId, id } = useSelector(selectCart.selectCart)
 
     let cart = {}
-    // console.log("cart", cart)
     if (items) {
-        // console.log(cart)
         const a = items.map((v) => v.quantity).reduce((total, v) => total + v, 0)
-        console.log("tongggggg", a)
         cart = { ...items, totalCount: a }
     }
-
-    console.log(currentUser)
 
     const [open, setOpen] = useState(false)
     const [openAuthModal, setOpenAuthModal] = useState(false)
