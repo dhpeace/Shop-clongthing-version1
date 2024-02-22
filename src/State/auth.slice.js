@@ -17,6 +17,7 @@ import { api } from "../config/apiConfig"
 
 export const fetchInfo = createAsyncThunk("authv2/getInfo", async () => {
     const a = await api.post("/user/profile", "", {})
+    console.log("fetchinfo")
     return a.data.data
 })
 

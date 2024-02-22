@@ -6,6 +6,10 @@ import React from "react"
 import { useNavigate } from "react-router-dom"
 
 function LoginForm({ onSubmit }) {
+    const a = "http://localhost:5173/login-redirect"
+    const gglink = `http://localhost:8081/api/v1/oauth2/authorization/google?redirect_url=${a}`
+    const fblink = `http://localhost:8081/api/v1/oauth2/authorization/facebook?redirect_url=${a}`
+
     const navigate = useNavigate()
     const handleSubmit = (event) => {
         event.preventDefault()
@@ -58,6 +62,18 @@ function LoginForm({ onSubmit }) {
                     <p> If you already have an account, </p>
                     <Button onClick={() => navigate("/register")} className="ml-5" size="small" color="primary">
                         Register
+                    </Button>
+                </div>
+                <div className="py-3 flex items-center">
+                    <p>Login with googole </p>
+                    <Button onClick={() => (window.location.href = gglink)} className="ml-5" size="small" color="primary">
+                        Login with googole
+                    </Button>
+                </div>
+                <div className="py-3 flex items-center">
+                    <p>Login with facebook</p>
+                    <Button onClick={() => (window.location.href = fblink)} className="ml-5" size="small" color="primary">
+                        Login with facebook
                     </Button>
                 </div>
             </div>
