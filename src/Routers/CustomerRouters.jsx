@@ -15,6 +15,7 @@ import OrderDetails from "../Custommer/Component/Order/OrderDetails"
 import { useDispatch } from "react-redux"
 import { fetchInfo } from "../State/auth.slice"
 import { fetchGetCartUser } from "../State/cart.slice"
+import LoginRedirect from "../Custommer/Component/redirect/LoginRedirect"
 
 function CustomerRouters() {
     const dispatch = useDispatch()
@@ -36,6 +37,7 @@ function CustomerRouters() {
                 <Route path="/register" element={<Homepage />} />
                 <Route path="/" element={<Homepage />} />
                 <Route path="/cart" element={<Cart />} />
+                <Route path="/login-redirect" element={<LoginRedirect />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/product" element={<Product />} />
                 <Route path="/product/:id" element={<ProductDetail />} />

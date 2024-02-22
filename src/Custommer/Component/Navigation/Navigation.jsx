@@ -139,9 +139,15 @@ function classNames(...classes) {
 
 export default function Navigation() {
     // const dispatch = useDispatch()
-    // ks
+    // // ks
 
     const currentUser = useSelector(selectAuth.selectCurrentUser)
+    // useEffect(() => {
+    //     const fetch = async () => {
+    //         await dispatch(fetchInfo())
+    //     }
+    //     fetch()
+    // })
     const { items, userId, id } = useSelector(selectCart.selectCart)
 
     let cart = {}
@@ -180,11 +186,11 @@ export default function Navigation() {
         close()
     }
 
-    useEffect(() => {
-        if (jwt) {
-            dispatch(getUser(jwt))
-        }
-    }, [jwt])
+    // useEffect(() => {
+    //     if (jwt) {
+    //         dispatch(getUser(jwt))
+    //     }
+    // }, [jwt])
 
     // useEffect(() => {
     //   if (auth.user) {
