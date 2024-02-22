@@ -3,6 +3,7 @@ import { Alert, AlertTitle, Grid } from "@mui/material";
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import AddressCard from "../AddressCard/AddressCard";
+import OrderTracker from "../Order/OrderTracker";
 
 function PaymentSucsecss() {
   const [paymentId, setPaymentId] = useState();
@@ -21,11 +22,12 @@ function PaymentSucsecss() {
         </Alert>
       </div>
 
-      {/* <OrderTracker activeStep={1} /> */}
+      <OrderTracker activeStep={1} />
 
       <Grid container className="space-y-5 py-5 pt-20">
-        {order.order?.orderItems.map((item) => (
+        {order.order?.orderItems.map((item, index) => (
           <Grid
+            key={index}
             container
             item
             className="shadow-xl rounded-md p-5"
