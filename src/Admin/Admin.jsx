@@ -18,11 +18,12 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 // import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { Dashboard } from "@mui/icons-material";
+
 import CreateProductForm from "./Components/CreateProductForm";
 import CustomersTable from "./Components/CustomersTable";
 import OrderTable from "./Components/OrderTable";
 import ProductsTable from "./Components/ProductsTable";
+import Dashboard from "./Components/Dashboard";
 
 const menu = [
   { name: "Dashboard", path: "/admin", icon: <DashboardIcon /> },
@@ -50,7 +51,7 @@ function Admin() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        border: "1px solid blue",
+        // border: "1px solid blue",
         height: "100%",
       }}>
       <>
@@ -85,11 +86,11 @@ function Admin() {
 
   return (
     <div>
-      <div className="flex">
+      <div className="flex h-[100vh]">
         <CssBaseline />
-        <div>{drawer}</div>
+        <div className="w-[15%] border border-r-gray-300 ">{drawer}</div>
 
-        <Box>
+        <div className="w-[85%]">
           <Routes>
             <Route path="/" element={<Dashboard />}></Route>
             <Route
@@ -99,7 +100,7 @@ function Admin() {
             <Route path="/orders" element={<OrderTable />}></Route>
             <Route path="/products" element={<ProductsTable />}></Route>
           </Routes>
-        </Box>
+        </div>
       </div>
     </div>
   );

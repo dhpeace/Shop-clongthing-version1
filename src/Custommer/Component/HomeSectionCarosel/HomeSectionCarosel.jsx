@@ -45,8 +45,8 @@ function HomeSectionCarosel({ data, sectionname }) {
             onClick={slideNext}
             sx={{
               position: "absolute",
-              top: "7rem",
-              right: "5rem",
+              top: "20rem",
+              right: "1rem",
               transform: "translateX(50%) rotate(90deg)",
               bgcolor: "white",
             }}
@@ -63,8 +63,8 @@ function HomeSectionCarosel({ data, sectionname }) {
           onClick={slidePrev}
           sx={{
             position: "absolute",
-            top: "7rem",
-            left: "0rem",
+            top: "20rem",
+            left: "-2rem",
             transform: "translateX(50%) rotate(-90deg)",
             bgcolor: "white",
           }}
