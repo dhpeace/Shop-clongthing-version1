@@ -1,10 +1,11 @@
 import { Button, Grid, TextField } from "@mui/material"
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
+// import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom"
-import { getUser, register } from "../../../State/Auth/Action"
+// import { getUser, register } from "../../../State/Auth/Action";
 import PropTypes from "prop-types"
+import { useState } from "react"
 
 function RegisterForm({ onSubmit }) {
     const navigate = useNavigate()
@@ -20,7 +21,7 @@ function RegisterForm({ onSubmit }) {
             password: data.get("password"),
         }
 
-        onSubmit({...userData})
+        onSubmit({ ...userData })
     }
     const handleClickLogin = () => {
         navigate("/login")

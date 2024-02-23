@@ -141,15 +141,10 @@ function classNames(...classes) {
 
 export default function Navigation() {
     const dispatch = useDispatch()
-    // // ks
 
     const currentUser = useSelector(selectAuth.selectCurrentUser)
-    // useEffect(() => {
-    //     const fetch = async () => {
-    //         await dispatch(fetchInfo())
-    //     }
-    //     fetch()
-    // })
+
+    // eslint-disable-next-line no-unused-vars
     const { items, userId, id } = useSelector(selectCart.selectCart)
 
     let cart = {}
@@ -162,18 +157,6 @@ export default function Navigation() {
     const [openAuthModal, setOpenAuthModal] = useState(false)
 
     const navigagte = useNavigate()
-    const [anchorEl, setAnchorEl] = useState(null)
-    const openUserMenu = Boolean(anchorEl)
-    const jwt = localStorage.getItem("jwt")
-    // const { auth } = useSelector((store) => store);
-
-    const handleUserClick = (event) => {
-        setAnchorEl(event.currentTarget)
-    }
-
-    const handleCloseUserMenu = (event) => {
-        setAnchorEl(null)
-    }
 
     const handleOpen = () => {
         setOpenAuthModal(true)
@@ -183,11 +166,6 @@ export default function Navigation() {
         setOpenAuthModal(false)
     }
 
-    const handleCategoryClick = (category, section, item, close) => {
-        navigagte(`/${category.id}/${section.id}/${item.id}`)
-        close()
-    }
-
     const handleLogout = () => {
         removeUserId()
         removeAccessToken()
@@ -195,21 +173,6 @@ export default function Navigation() {
         dispatch(cartAction.logout())
         navigagte("/product")
     }
-
-    // useEffect(() => {
-    //     if (jwt) {
-    //         dispatch(getUser(jwt))
-    //     }
-    // }, [jwt])
-
-    // useEffect(() => {
-    //   if (auth.user) {
-    //     handleClose();
-    //   }
-    //   if (location.pathname === "/login" || location.pathname === "/register") {
-    //     navigagte(-1);
-    //   }
-    // }, [auth.user]);
 
     const HandleToProduct = () => {
         navigagte("/product")
@@ -502,7 +465,7 @@ export default function Navigation() {
 
                                             <div className="flow-root">
                                                 <a href="#" className="-m-2 block p-2 font-medium text-gray-900" onClick={handleOpen}>
-                                                    Sign in
+                                                    Đăng nhập
                                                 </a>
                                             </div>
                                             {/* <div className="flow-root">

@@ -22,21 +22,8 @@ const style = {
     boxShadow: 24,
     p: 4,
 }
-const idata = {
-    cartId: null,
-    userId: null,
-    address: null,
-    discountId: null,
-    items: [],
-}
 
 function Cart() {
-    //  useEffect(()=>{
-    //     const fetch= async()=>{
-    //         const a =
-    //     }
-    //  })
-
     const dispatch = useDispatch()
     const cart = useSelector(selectCart.selectCart)
     const [showRegister, setShowRegister] = useState(false)
@@ -126,7 +113,7 @@ function Cart() {
                 <div className="border-2 border-indigo-200 p-5 rounded-lg bg-white shadow-2xl">
                     <div className="flex justify-end text-indigo-800 pb-4 border-b-2 border-indigo-200">
                         <h2 onClick={() => setShow(!show)} className="uppercase font-bold ">
-                            Chon ma hoac nhap ma giam gia
+                            Nhập mã giảm giá (Nếu có)
                         </h2>
                         {selectDiscount && <h4>{`{${selectDiscount.name}}`}</h4>}
                     </div>

@@ -8,10 +8,11 @@ import { useLocation, useNavigate } from "react-router-dom"
 import LoginForm from "./LoginForm"
 import { api } from "../../../config/apiConfig"
 import { useDispatch } from "react-redux"
-import { authAction, fetchInfo } from "../../../State/auth.slice"
+import { authAction } from "../../../State/auth.slice"
 import { useState } from "react"
 import { getAccessToken, getUserId } from "../../../utils/authUtils"
 import { getUser } from "../../../State/Auth/Action"
+import Logout from "./Logout"
 import { cartAction, fetchGetCartUser } from "../../../State/cart.slice"
 
 const style = {
@@ -69,7 +70,9 @@ function AuthModal({ handleClose, open, isConverModToUser, idUserMod, urlReturnL
                     {location.pathname === "/register" || isConverModToUser ? (
                         <RegisterForm onSubmit={handleOnRegister} />
                     ) : (
-                        <LoginForm onSubmit={handleOnLogin} />
+                        <>
+                            <LoginForm onSubmit={handleOnLogin} />
+                        </>
                     )}
                 </Box>
             </Modal>
