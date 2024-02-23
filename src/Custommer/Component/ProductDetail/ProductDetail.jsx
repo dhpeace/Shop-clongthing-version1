@@ -20,48 +20,6 @@ import { getUserId, removeAccessToken, setUserId } from "../../../utils/authUtil
 const highlights = ["Hand cut and sewn locally", "Dyed with our proprietary colors", "Pre-washed & pre-shrunk", "Ultra-soft 100% cotton"]
 const details =
     'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.'
-// const product111 = {
-//     name: "Basic Tee 6-Pack",
-//     price: "$192",
-//     href: "#",
-//     breadcrumbs: [
-//         { id: 1, name: "Men", href: "#" },
-//         { id: 2, name: "Clothing", href: "#" },
-//     ],
-//     images: [
-//         {
-//             src: "https://media2.coolmate.me/cdn-cgi/image/quality=80,format=auto/uploads/December2023/_CMM7839_2.jpg",
-//             alt: "Two each of gray, white, and black shirts laying flat.",
-//         },
-//         {
-//             src: "https://media2.coolmate.me/cdn-cgi/image/quality=80,format=auto/uploads/December2023/CS_CMM7865.jpg",
-//             alt: "Model wearing plain black basic tee.",
-//         },
-//         {
-//             src: "https://media2.coolmate.me/cdn-cgi/image/quality=80,format=auto/uploads/December2023/_CMM7872.jpg",
-//             alt: "Model wearing plain gray basic tee.",
-//         },
-//         {
-//             src: "https://media2.coolmate.me/cdn-cgi/image/quality=80,format=auto/uploads/December2023/_CMM7899_36.jpg",
-//             alt: "Model wearing plain white basic tee.",
-//         },
-//     ],
-//     colors: [
-//         { name: "White", class: "bg-white", selectedClass: "ring-gray-400" },
-//         { name: "Gray", class: "bg-gray-200", selectedClass: "ring-gray-400" },
-//         { name: "Black", class: "bg-gray-900", selectedClass: "ring-gray-900" },
-//     ],
-//     sizes: [
-//         { name: "S", inStock: true },
-//         { name: "M", inStock: true },
-//         { name: "L", inStock: true },
-//     ],
-//     description:
-//         'The Basic Tee 6-Pack allows you to fully express your vibrant personality with three grayscale options. Feeling adventurous? Put on a heather gray tee. Want to be a trendsetter? Try our exclusive colorway: "Black". Need to add an extra pop of color to your outfit? Our white tee has you covered.',
-//     highlights: ["Hand cut and sewn locally", "Dyed with our proprietary colors", "Pre-washed & pre-shrunk", "Ultra-soft 100% cotton"],
-//     details:
-//         'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
-// }
 
 const cl = cln.bind()
 
@@ -125,6 +83,7 @@ export default function ProductDetail() {
                     price: product.price,
                 })
             )
+            setUserId(getUserId())
             await dispatch(fetchAddToCart())
             toast("add cart is success")
         } else {
@@ -149,35 +108,6 @@ export default function ProductDetail() {
     return (
         <div className="bg-white">
             <div className="pt-6">
-                {/* <nav aria-label="Breadcrumb">
-                    <ol role="list" className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-                        {product.breadcrumbs.map((breadcrumb) => (
-                            <li key={breadcrumb.id}>
-                                <div className="flex items-center">
-                                    <a href={breadcrumb.href} className="mr-2 text-sm font-medium text-gray-900">
-                                        {breadcrumb.name}
-                                    </a>
-                                    <svg
-                                        width={16}
-                                        height={20}
-                                        viewBox="0 0 16 20"
-                                        fill="currentColor"
-                                        aria-hidden="true"
-                                        className="h-5 w-4 text-gray-300"
-                                    >
-                                        <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
-                                    </svg>
-                                </div>
-                            </li>
-                        ))}
-                        <li className="text-sm">
-                            <a href={product.href} aria-current="page" className="font-medium text-gray-500 hover:text-gray-600">
-                                {product.name}
-                            </a>
-                        </li>
-                    </ol>
-                </nav> */}
-
                 {/* Image & Product Infor */}
                 <section className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-10 px-4 pt-10">
                     {/* Image gallery */}

@@ -15,12 +15,12 @@ function RegisterForm({ onSubmit }) {
         const data = new FormData(event.currentTarget)
 
         const userData = {
-            name: `${data.get("firtName")} ${data.get("lastName")}`,
+            name: `${data.get("firtname")} ${data.get("lastname")}`,
             email: data.get("email"),
             password: data.get("password"),
         }
 
-        onSubmit(userData)
+        onSubmit({...userData})
     }
     const handleClickLogin = () => {
         navigate("/login")

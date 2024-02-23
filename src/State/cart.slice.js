@@ -65,6 +65,11 @@ const CartSlice = createSlice({
         setUserId: (state, action) => {
             state.userId = action.payload
         },
+        logout: (state) => {
+            state.id = null
+            state.items = []
+            state.userId = null
+        },
     },
     extraReducers: (builder) => {
         builder

@@ -12,6 +12,7 @@ import { authAction, fetchInfo } from "../../../State/auth.slice"
 import { useState } from "react"
 import { getAccessToken, getUserId } from "../../../utils/authUtils"
 import { getUser } from "../../../State/Auth/Action"
+import { cartAction, fetchGetCartUser } from "../../../State/cart.slice"
 
 const style = {
     position: "absolute",
@@ -24,7 +25,7 @@ const style = {
     boxShadow: 24,
     p: 4,
 }
-function AuthModal({ handleClose, open, isConverModToUser, idUserMod, urlReturnLogin = "/", urlReturnRegister }) {
+function AuthModal({ handleClose, open, isConverModToUser, idUserMod, urlReturnLogin = "/", handleRegister, urlReturnRegister }) {
     const navigate = useNavigate()
     const location = useLocation()
     const dispatch = useDispatch()
@@ -33,8 +34,10 @@ function AuthModal({ handleClose, open, isConverModToUser, idUserMod, urlReturnL
         try {
             const a = await api.post("/auth/login", data)
             dispatch(authAction.loginSuccess(a.data.data))
+            dispatch(fetchGetCartUser())
             handleClose()
             navigate(urlReturnLogin)
+            toast("login success")
         } catch (error) {
             console.log(error.response.data.message)
             toast(error.response.data.message)
@@ -49,8 +52,10 @@ function AuthModal({ handleClose, open, isConverModToUser, idUserMod, urlReturnL
                 },
             })
             dispatch(authAction.loginSuccess(a.data.data))
+
             handleClose()
-            navigate(urlReturnRegister)
+            handleRegister && (await handleRegister())
+            // navigate(urlReturnRegister)
         } catch (error) {
             console.log(error.response)
             toast(error.response?.data?.data + " " + error.response?.data?.message)
@@ -80,6 +85,7 @@ AuthModal.propTypes = {
     onRegisterSuccess: PropTypes.func,
     idUserMod: PropTypes.string,
     urlReturnRegister: PropTypes.string,
+    handleRegister: PropTypes.func,
 }
 AuthModal.defaultProps = {
     urlReturnLogin: "/",

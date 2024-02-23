@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import CartItem from "./CartItem"
 import { useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
-import { cartAction, fetchAddToCart, selectCart } from "../../../State/cart.slice"
+import { cartAction, fetchAddToCart, fetchGetCartUser, selectCart } from "../../../State/cart.slice"
 import { api } from "../../../config/apiConfig"
 import { getUserId } from "../../../utils/authUtils"
 import { checkoutAction } from "../../../State/checkout.slice"
@@ -22,8 +22,21 @@ const style = {
     boxShadow: 24,
     p: 4,
 }
+const idata = {
+    cartId: null,
+    userId: null,
+    address: null,
+    discountId: null,
+    items: [],
+}
 
 function Cart() {
+    //  useEffect(()=>{
+    //     const fetch= async()=>{
+    //         const a =
+    //     }
+    //  })
+
     const dispatch = useDispatch()
     const cart = useSelector(selectCart.selectCart)
     const [showRegister, setShowRegister] = useState(false)
@@ -49,16 +62,20 @@ function Cart() {
 
     const navigate = useNavigate()
     const handleCheckout = async () => {
-        const data = {
-            cartId: cart.id,
-            userId: cart.userId,
-            address: null,
-            discountId: selectDiscount?.id ? selectDiscount.id : null,
-            items: cart.items,
-        }
+        dispatch(cartAction.setUserId(getUserId()))
         try {
             if (currentUser) {
-                const a = await api.post("/order/checkout-review", data)
+                console.log("cccccc")
+
+                const a = await api.post("/order/checkout-review", {
+                    cartId: cart.id,
+                    userId: cart.userId,
+                    items: cart.items,
+                    address: null,
+                    discountId: selectDiscount?.id ? selectDiscount.id : null,
+                })
+
+                console.log("response", a)
                 dispatch(checkoutAction.add(a.data.data))
                 navigate("/checkout")
             } else {
@@ -67,13 +84,25 @@ function Cart() {
                 console.log("cc")
             }
         } catch (error) {
-            toast(error.response.data.message)
+            toast(error.response)
+            toast(error.response?.data?.message)
         }
     }
 
     const handleOnPlusOrMinus = async (item, value) => {
         dispatch(cartAction.addToCart({ ...item, quantity: value }))
         await dispatch(fetchAddToCart())
+    }
+    const handleRegisterSucces = async () => {
+        const a = await api.post("/order/checkout-review", {
+            cartId: cart.id,
+            userId: cart.userId,
+            items: cart.items,
+            address: null,
+            discountId: selectDiscount?.id ? selectDiscount.id : null,
+        })
+        dispatch(checkoutAction.add(a.data.data))
+        navigate("/checkout")
     }
 
     return (
@@ -174,7 +203,9 @@ function Cart() {
                                         name="concac"
                                         checked={selectDiscount?.id === v.id}
                                         disabled={!v.on}
-                                        onClick={() => setSelectDiscout(v)}
+                                        onClick={() => {
+                                            setSelectDiscout(v)
+                                        }}
                                     />
                                 </div>
                             ))}
@@ -202,7 +233,8 @@ function Cart() {
                 isRegister={true}
                 idUserMod={getUserId()}
                 isConverModToUser={true}
-                urlReturnRegister={"/checkout"}
+                handleRegister={handleRegisterSucces}
+                // urlReturnRegister={"/checkout"}
                 handleClose={() => setShowRegister(false)}
             ></AuthModal>
         </div>

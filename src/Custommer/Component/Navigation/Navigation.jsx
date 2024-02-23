@@ -5,10 +5,12 @@ import { Link, useNavigate } from "react-router-dom"
 import AuthModal from "../Auth/AuthModal"
 import { useDispatch, useSelector } from "react-redux"
 import { getUser } from "../../../State/Auth/Action"
-import { fetchInfo, selectAuth } from "../../../State/auth.slice"
+import { authAction, fetchInfo, selectAuth } from "../../../State/auth.slice"
 import { current } from "immer"
 import { createSelector } from "reselect"
-import { selectCart } from "../../../State/cart.slice"
+import { cartAction, selectCart } from "../../../State/cart.slice"
+import { Dropdown } from "antd"
+import { removeAccessToken, removeUserId } from "../../../utils/authUtils"
 
 const navigation = {
     categories: [
@@ -138,7 +140,7 @@ function classNames(...classes) {
 }
 
 export default function Navigation() {
-    // const dispatch = useDispatch()
+    const dispatch = useDispatch()
     // // ks
 
     const currentUser = useSelector(selectAuth.selectCurrentUser)
@@ -184,6 +186,14 @@ export default function Navigation() {
     const handleCategoryClick = (category, section, item, close) => {
         navigagte(`/${category.id}/${section.id}/${item.id}`)
         close()
+    }
+
+    const handleLogout = () => {
+        removeUserId()
+        removeAccessToken()
+        dispatch(authAction.logout())
+        dispatch(cartAction.logout())
+        navigagte("/product")
     }
 
     // useEffect(() => {
@@ -480,10 +490,12 @@ export default function Navigation() {
                                     </a> */}
                                     <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
                                     {currentUser ? (
-                                        <div onClick={handleOpen}>
-                                            <img src={currentUser.image} width={30} height={30} className="rounded-3xl" alt="" />
-                                            <h1>{currentUser?.name}</h1>
-                                        </div>
+                                        <Dropdown menu={{ items: [{ key: 1, label: <p onClick={handleLogout}>logout</p> }] }} trigger={["click"]}>
+                                            <div className="flex space-x-2 items-center hover:cursor-pointer">
+                                                <img src={currentUser?.image} width={30} height={30} className="rounded-3xl" alt="" />
+                                                <h1>{currentUser?.name}</h1>
+                                            </div>
+                                        </Dropdown>
                                     ) : (
                                         <>
                                             {/* <h1>{currentUser?.name}</h1> */}
