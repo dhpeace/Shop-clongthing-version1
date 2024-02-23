@@ -37,8 +37,10 @@ const checkoutReducer = checkoutSlice.reducer
 const checkoutAction = checkoutSlice.actions
 
 // export select
-const selectCheckout = (state) => {
-    return state.checkout.checkout
+const selectCheckout = {
+    selectCheckout: (state) => {
+        return state.checkout.checkout
+    },
 }
 
 export { checkoutAction, selectCheckout }

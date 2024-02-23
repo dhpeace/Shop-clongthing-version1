@@ -36,6 +36,7 @@ function CartItem({ item, onMinus, onPlus, onRemove, isCheckOut = false }) {
                         <p className="text-lg font-semibold text-blue-600">{product?.price}đ</p>
                         {/* <p className="text-sm text-gray-500 line-through">898.000đ</p> */}
                     </div>
+
                     <div className="flex items-center space-x-2">
                         {!isCheckOut && (
                             <IconButton color="primary" onClick={onMinus}>

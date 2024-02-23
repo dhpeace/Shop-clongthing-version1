@@ -16,6 +16,10 @@ const removeAccessToken = () => {
     localStorage.removeItem(accsesToken)
 }
 
+const removeUserId = () => {
+    localStorage.removeItem(userId)
+}
+
 const setAccessToken = (a) => {
     return localStorage.setItem(accsesToken, a)
 }
@@ -25,4 +29,4 @@ const setRefeshToken = (a) => {
 const setUserId = (a) => {
     return localStorage.setItem(userId, a)
 }
-export { getAccessToken, getRefeshToken, getUserId, setAccessToken, setUserId, setRefeshToken, removeAccessToken }
+export { getAccessToken, getRefeshToken, getUserId, setAccessToken, setUserId, setRefeshToken, removeAccessToken, removeUserId }
