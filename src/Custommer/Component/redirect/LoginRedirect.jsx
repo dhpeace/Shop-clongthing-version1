@@ -27,7 +27,7 @@ const Redirect = () => {
             setRefeshToken(data.refreshToken)
             // setData(data)
             await dispatch(fetchInfo())
-            window.location.href(baseUrl)
+            window.location.href = baseUrl
         }
         // Gọi hàm xử lý redirect khi component được mount.
         handleRedirect()
