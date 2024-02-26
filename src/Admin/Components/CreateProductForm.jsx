@@ -1,61 +1,51 @@
-import {
-  Button,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, Grid, TextField, Typography } from "@mui/material";
 // eslint-disable-next-line no-unused-vars
-import React, { Fragment, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { Fragment, useEffect, useState } from "react";
+import { api } from "../../config/apiConfig";
+import { getAccessToken, getUserId } from "../../utils/authUtils";
 
 function CreateProductForm() {
-  const dispath = useDispatch();
   const [productData, setProductData] = useState({
-    imageUrl:"", 
-    brand:"", 
-    title:"", 
-    color:"", 
-    discountedPrice:"", 
-    price:"", 
-    discountPersent:"", 
-    size:initialSizes,
-    quantity:"", 
-    topLevelCategory:"", 
-    secondLevelCategory:"",
-    thirdLevelCategory:"",
-    description:"",
+    name: "",
+    image: "",
+    images: [""],
+    description: "",
+    price: 0,
+    discount: 0,
+    categoryIds: [""],
+    variations: [{ color: "", size: "", quantity: 0 }],
+    status: "",
   });
- 
-  const jwt = localStorage.getItem("jwt");
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProductData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    if (e.target.name === "categoryIds" || e.target.name === "images") {
+      setProductData({
+        ...productData,
+        [e.target.name]: e.target.value.split(","),
+      });
+    } else {
+      setProductData({ ...productData, [e.target.name]: e.target.value });
+    }
   };
 
-  const handleSizeChange = (e, index) => {
-    let { name, value } = e.target;
-    name==="size_quantity"?name="quantity":name=e.target.name;
-
-    const sizes = [...productData.size];
-    sizes[index][name] = value;
-    setProductData((prevState) => ({
-      ...prevState,
-      size: sizes,
-    }));
+  const handleVariationChange = (e, index) => {
+    const newVariations = [...productData.variations];
+    newVariations[index][e.target.name] = e.target.value;
+    setProductData({ ...productData, variations: newVariations });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispath(createProduct({ data: productData, jwt }));
-    console.log(productData);
+    try {
+      const response = await createProduct({ data: productData });
+      if (response.success) {
+        console.log("Sản phẩm add thành công:", response.product);
+      } else {
+        console.log("Failed to add product");
+      }
+    } catch (error) {
+      console.error("Lỗi khi add sản phẩm:", error);
+    }
   };
 
   return (
@@ -73,49 +63,29 @@ function CreateProductForm() {
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Image URL"
-              name="imageURl"
-              value={productData.imageURl}
+              label="Name"
+              name="name"
+              value={productData.name}
               onChange={handleChange}
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Brand"
-              name="brand"
-              value={productData.brand}
+              label="Image"
+              name="image"
+              value={productData.image}
               onChange={handleChange}
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Title"
-              name="title"
-              value={productData.title}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Color"
-              name="color"
-              value={productData.color}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Quantity"
-              name="quantity"
-              value={productData.quantity}
+              label="Description"
+              name="description"
+              value={productData.description}
               onChange={handleChange}
             />
           </Grid>
@@ -133,80 +103,63 @@ function CreateProductForm() {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Discount Percentage"
-              name="discountPresent"
+              label="Discount"
+              name="discount"
               type="number"
-              value={productData.discountPersent}
+              value={productData.discount}
               onChange={handleChange}
             />
           </Grid>
 
-          <Grid item xs={6} sm={4}>
-            <FormControl fullWidth>
-              <InputLabel>Top level Category</InputLabel>
-              <Select
-                name="topLevelCategory"
-                value={productData.topLevelCategory}
-                onChange={handleChange}
-                label="Top Level Category">
-                <MenuItem value="men">Men</MenuItem>
-                <MenuItem value="women">Women</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={6} sm={4}>
-            <FormControl fullWidth>
-              <InputLabel>Second level Category</InputLabel>
-              <Select
-                name="secondLevelCategory"
-                value={productData.secondLevelCategory}
-                onChange={handleChange}
-                label="Second Level Category">
-                <MenuItem value="men">Clothing</MenuItem>
-                <MenuItem value="women">Brand</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={6} sm={4}>
-            <FormControl fullWidth>
-              <InputLabel>Third level Category</InputLabel>
-              <Select
-                name="thirdLevelCategory"
-                value={productData.thirdLevelCategory}
-                onChange={handleChange}
-                label="Third Level Category">
-                <MenuItem value="men">Tops</MenuItem>
-                <MenuItem value="women">Dresses</MenuItem>
-                <MenuItem value="men">T-shirt</MenuItem>
-                <MenuItem value="women">Saree</MenuItem>
-                <MenuItem value="women">Lengha Choli</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          {/* Description */}
           <Grid item xs={12}>
             <TextField
               fullWidth
-              id="outlined-multiline-static"
-              multiline
-              label="Description"
-              name="description"
-              rows={3}
-              value={productData.description}
+              label="Status"
+              name="status"
+              value={productData.status}
               onChange={handleChange}
             />
           </Grid>
-          {productData.size.map((size, index) => (
-            <Grid container item spacing={3}>
+
+          {/* Category IDs */}
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Category IDs"
+              name="categoryIds"
+              value={productData.categoryIds}
+              onChange={handleChange}
+            />
+          </Grid>
+
+          {/* Variations */}
+          {productData.variations.map((variation, index) => (
+            <Grid container item spacing={3} key={index}>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Size Name"
-                  name="name"
-                  value={size.name}
-                  onChange={(event) => handleSizeChange(event, index)}
-                  required
+                  label="Color"
+                  name="color"
+                  value={variation.color}
+                  onChange={(event) => handleVariationChange(event, index)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Size"
+                  name="size"
+                  value={variation.size}
+                  onChange={(event) => handleVariationChange(event, index)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Quantity"
+                  name="quantity"
+                  value={variation.quantity}
+                  onChange={(event) => handleVariationChange(event, index)}
                 />
               </Grid>
             </Grid>
@@ -227,5 +180,27 @@ function CreateProductForm() {
     </Fragment>
   );
 }
+
+async function createProduct({ data }) {
+  try {
+    const response = await api.post("/product", data, {
+      headers: {
+        authorization: getAccessToken(),
+        "x-client-id": getUserId(),
+      },
+    });
+    console.log("API Response:", response);
+
+    if (response.status === 200) {
+      return { success: true, product: response.data };
+    } else {
+      return { success: false };
+    }
+  } catch (error) {
+    console.error("Lỗi khi fetching dữ liệu:", error);
+    return { success: false };
+  }
+}
+
 
 export default CreateProductForm;
