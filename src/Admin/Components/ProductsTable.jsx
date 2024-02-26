@@ -10,7 +10,7 @@ import Paper from "@mui/material/Paper";
 import { api } from "../../config/apiConfig";
 import Pagination from "@mui/material/Pagination";
 import { Button, Card, CardHeader } from "@mui/material";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 
 function ProductsTable() {
   const [products, setProducts] = useState([]);

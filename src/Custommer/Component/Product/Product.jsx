@@ -92,6 +92,8 @@ export default function Product() {
     };
     fetch();
   }, []);
+  console.log("categories", categories);
+  
   useEffect(() => {
     const fetchData = async () => {
       let params = Object.keys(query)
