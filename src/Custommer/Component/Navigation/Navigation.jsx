@@ -453,12 +453,37 @@ export default function Navigation() {
                                     </a> */}
                                     <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
                                     {currentUser ? (
-                                        <Dropdown menu={{ items: [{ key: 1, label: <p onClick={handleLogout}>logout</p> }] }} trigger={["click"]}>
-                                            <div className="flex space-x-2 items-center hover:cursor-pointer">
-                                                <img src={currentUser?.image} width={30} height={30} className="rounded-3xl" alt="" />
-                                                <h1>{currentUser?.name}</h1>
-                                            </div>
-                                        </Dropdown>
+                                        currentUser?.roles.find((v) => v === "USER") ? (
+                                            <Dropdown
+                                                menu={{
+                                                    items: [
+                                                        { key: 1, label: <p onClick={handleLogout}>logout</p> },
+                                                        { key: 2, label: <p onClick={() => navigagte("/account/order")}>your order</p> },
+                                                    ],
+                                                }}
+                                                trigger={["click"]}
+                                            >
+                                                <div className="flex space-x-2 items-center hover:cursor-pointer">
+                                                    <img src={currentUser?.image} width={30} height={30} className="rounded-3xl" alt="" />
+                                                    <h1>{currentUser?.name}</h1>
+                                                </div>
+                                            </Dropdown>
+                                        ) : (
+                                            <Dropdown
+                                                menu={{
+                                                    items: [
+                                                        { key: 1, label: <p onClick={handleLogout}>logout</p> },
+                                                        { key: 2, label: <p onClick={() => navigagte("/admin")}>go to admin page</p> },
+                                                    ],
+                                                }}
+                                                trigger={["click"]}
+                                            >
+                                                <div className="flex space-x-2 items-center hover:cursor-pointer">
+                                                    <img src={currentUser?.image} width={30} height={30} className="rounded-3xl" alt="" />
+                                                    <h1>{currentUser?.name}</h1>
+                                                </div>
+                                            </Dropdown>
+                                        )
                                     ) : (
                                         <>
                                             {/* <h1>{currentUser?.name}</h1> */}

@@ -19,15 +19,6 @@ import LoginRedirect from "../Custommer/Component/redirect/LoginRedirect"
 import PaymentRedirect from "../Custommer/Component/redirect/PaymentRedirect"
 
 function CustomerRouters() {
-    const dispatch = useDispatch()
-
-    useEffect(() => {
-        const fetch = async () => {
-            await dispatch(fetchInfo())
-            await dispatch(fetchGetCartUser())
-        }
-        fetch()
-    }, [])
     return (
         <div>
             <div>
@@ -43,8 +34,8 @@ function CustomerRouters() {
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/product" element={<Product />} />
                 <Route path="/product/:id" element={<ProductDetail />} />
-                <Route path="/acount/order/" element={<Order />} />
-                <Route path="/acount/order/:orderId" element={<OrderDetails />} />
+                <Route path="/account/order/" element={<Order />} />
+                <Route path="/account/order/:orderId" element={<OrderDetails />} />
                 <Route path="/payment/:orderId" element={<PaymentSucsecss />} />
             </Routes>
             <div>
