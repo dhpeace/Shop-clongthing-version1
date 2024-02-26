@@ -13,7 +13,18 @@ function CreateProductForm() {
     price: 0,
     discount: 0,
     categoryIds: [""],
-    variations: [{ color: "", size: "", quantity: 0 }],
+    variations: [
+      {
+        id: "",
+        parentId: "",
+        title: "",
+        description: "",
+        thumb: "",
+        color: "",
+        size: "",
+        quantity: 0,
+      },
+    ],
     status: "",
   });
 
@@ -38,7 +49,7 @@ function CreateProductForm() {
     e.preventDefault();
     try {
       const response = await createProduct({ data: productData });
-      if (response.success) {
+      if (response && response.success) {
         console.log("Sản phẩm add thành công:", response.product);
       } else {
         console.log("Failed to add product");
@@ -138,6 +149,51 @@ function CreateProductForm() {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
+                  label="ID"
+                  name="id"
+                  value={variation.id}
+                  onChange={(event) => handleVariationChange(event, index)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Parent ID"
+                  name="parentId"
+                  value={variation.parentId}
+                  onChange={(event) => handleVariationChange(event, index)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Title"
+                  name="title"
+                  value={variation.title}
+                  onChange={(event) => handleVariationChange(event, index)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Description"
+                  name="description"
+                  value={variation.description}
+                  onChange={(event) => handleVariationChange(event, index)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Thumb"
+                  name="thumb"
+                  value={variation.thumb}
+                  onChange={(event) => handleVariationChange(event, index)}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
                   label="Color"
                   name="color"
                   value={variation.color}
@@ -198,9 +254,9 @@ async function createProduct({ data }) {
     }
   } catch (error) {
     console.error("Lỗi khi fetching dữ liệu:", error);
+    console.error("Error details:", error.response);
     return { success: false };
   }
 }
-
 
 export default CreateProductForm;
