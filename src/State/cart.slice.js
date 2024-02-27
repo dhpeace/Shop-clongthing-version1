@@ -89,7 +89,7 @@ const CartSlice = createSlice({
                 // state.status = StatusState.SUCCESS
                 state.id = action.payload.id
                 state.userId = action.payload.userId
-                state.items = action.payload.items
+                state.items = action.payload.items ? action.payload.items : []
             })
     },
 })

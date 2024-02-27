@@ -11,6 +11,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle"
 import CreateProductForm from "./Components/CreateProductForm"
 import CustomersTable from "./Components/CustomersTable"
 import OrderTable from "./Components/OrderTable"
+import Report from "./Components/report/Report"
 import ProductsTable from "./Components/ProductsTable"
 import Dashboard from "./Components/Dashboard"
 import OrdersAd from "./Components/order/OrdersAd"
@@ -19,6 +20,7 @@ const menu = [
     { name: "Dashboard", path: "/admin", icon: <DashboardIcon /> },
     { name: "Products", path: "/admin/products", icon: <DashboardIcon /> },
     { name: "Custommers", path: "/admin/custommers", icon: <DashboardIcon /> },
+    { name: "Report", path: "/admin/report", icon: <DashboardIcon /> },
     { name: "Orders", path: "/admin/orders", icon: <DashboardIcon /> },
     {
         name: "AddProduct",
@@ -83,6 +85,7 @@ function Admin() {
                         <Route path="/" element={<Dashboard />}></Route>
                         <Route path="/product/create" element={<CreateProductForm />}></Route>
                         <Route path="/custommers" element={<CustomersTable />}></Route>
+                        <Route path="/report" element={<Report />}></Route>
                         <Route path="/orders" element={<OrdersAd />}></Route>
                         <Route path="/products" element={<ProductsTable />}></Route>
                     </Routes>

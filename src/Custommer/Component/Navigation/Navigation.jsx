@@ -453,12 +453,13 @@ export default function Navigation() {
                                     </a> */}
                                     <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
                                     {currentUser ? (
-                                        currentUser?.roles.find((v) => v === "USER") ? (
+                                        currentUser?.roles.find((v) => v === "ADMIN") ? (
                                             <Dropdown
                                                 menu={{
                                                     items: [
                                                         { key: 1, label: <p onClick={handleLogout}>logout</p> },
                                                         { key: 2, label: <p onClick={() => navigagte("/account/order")}>your order</p> },
+                                                        { key: 3, label: <p onClick={() => navigagte("/admin")}>go to admin page</p> },
                                                     ],
                                                 }}
                                                 trigger={["click"]}
@@ -473,7 +474,7 @@ export default function Navigation() {
                                                 menu={{
                                                     items: [
                                                         { key: 1, label: <p onClick={handleLogout}>logout</p> },
-                                                        { key: 2, label: <p onClick={() => navigagte("/admin")}>go to admin page</p> },
+                                                        { key: 2, label: <p onClick={() => navigagte("/account/order")}>your order</p> },
                                                     ],
                                                 }}
                                                 trigger={["click"]}

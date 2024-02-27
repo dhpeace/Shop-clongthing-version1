@@ -5,12 +5,13 @@ import { api, setHeaders } from "../../../config/apiConfig"
 import { getAccessToken, getUserId } from "../../../utils/authUtils"
 import { PaymentTpye, StateOrder } from "../../../utils/constan"
 import { toast } from "react-toastify"
-import dayjs from "dayjs"
+// import dayjs from "dayjs"
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo"
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker"
 import { format, parse } from "date-fns"
+import dayjs from "dayjs"
 
 const strDateFormat = "dd-MM-yyyy HH:mm:ss"
 
@@ -69,7 +70,6 @@ const OrdersAd = () => {
     const [totalPage, setTotalPage] = useState(null)
 
     console.log(orders)
-
     useEffect(() => {
         const fetch = async () => {
             let params = Object.keys(query)
