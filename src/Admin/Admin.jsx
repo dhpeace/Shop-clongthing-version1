@@ -82,6 +82,7 @@ function Admin() {
                     <Routes>
                         <Route path="/" element={<Dashboard />}></Route>
                         <Route path="/product/create" element={<CreateProductForm />}></Route>
+                     
                         <Route path="/custommers" element={<CustomersTable />}></Route>
                         <Route path="/orders" element={<OrdersAd />}></Route>
                         <Route path="/products" element={<ProductsTable />}></Route>

@@ -1,0 +1,94 @@
+/* Container styles */
+.createProductContainer {
+    max-width: 1300px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Heading styles */
+  .createProductContainer h3 {
+    text-align: center;
+    color: #ee4d2d;
+    font-family: 'Arial', sans-serif;
+    font-size: 24px; /* Điều chỉnh kích thước font */
+  }
+  
+  /* Form styles */
+  .createProductContainer form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .createProductContainer form label {
+    font-size: 14px; /* Điều chỉnh kích thước font */
+    color: #333;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .createProductContainer form input,
+  .createProductContainer form select {
+    padding: 10px; /* Điều chỉnh padding */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 12px; /* Điều chỉnh kích thước font */
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* File input styles */
+  .createProductContainer form input[type="file"] {
+    display: none;
+  }
+  
+  .createProductContainer form label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ee4d2d;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+  }
+  
+  .createProductContainer form label:hover {
+    background-color: #f25a3a;
+  }
+  
+  .createProductContainer form img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 6px;
+  }
+  
+  /* Button styles */
+  .createProductContainer form button {
+    background-color: #ee4d2d;
+    color: white;
+    padding: 10px 20px; /* Điều chỉnh padding */
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .createProductContainer form button:hover {
+    background-color: #f25a3a;
+  }
+  
+  /* Set a fixed height for form elements */
+  .createProductContainer form label,
+  .createProductContainer form input,
+  .createProductContainer form select,
+  .createProductContainer form button {
+    height: 40px; /* Điều chỉnh chiều cao */
+  }
+  
+  /* Add some spacing between the image and other form elements */
+  .createProductContainer form img {
+    margin-bottom: 10px;
+  }
+  
