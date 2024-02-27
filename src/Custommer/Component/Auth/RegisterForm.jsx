@@ -16,7 +16,7 @@ function RegisterForm({ onSubmit }) {
         const data = new FormData(event.currentTarget)
 
         const userData = {
-            name: `${data.get("firtname")} ${data.get("lastname")}`,
+            name: data.get("firtname"),
             email: data.get("email"),
             password: data.get("password"),
         }

@@ -335,7 +335,7 @@ export default function Product() {
                                                 }))
                                             }
                                             value={query?.minPrice ? query.minPrice : ""}
-                                            label="min price (d)"
+                                            label="min price (nghin dong)"
                                             type="number"
                                             size="small"
                                             InputLabelProps={{
@@ -355,7 +355,7 @@ export default function Product() {
                                             }}
                                             value={query.maxPrice ? query.maxPrice : ""}
                                             size="small"
-                                            label="max price (d)"
+                                            label="max price (nghin dong)"
                                             type="number"
                                             variant="outlined"
                                             InputLabelProps={{
@@ -384,6 +384,7 @@ export default function Product() {
                                         <h1 className="text-gray-600 font-semibold text-2xl">
                                             no product with:
                                             {Object.keys(query)
+                                                .filter((key) => query[key] && key !== "size" && key !== "page")
                                                 .map((key) => `${key}=${query[key]}`)
                                                 .join("\n")}
                                         </h1>
