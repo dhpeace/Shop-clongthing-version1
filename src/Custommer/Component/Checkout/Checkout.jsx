@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { BiArrowBack } from "react-icons/bi"
-import "./checkout.css"
+import "./Checkout.css"
 import { useDispatch, useSelector } from "react-redux"
 import { checkoutAction, selectCheckout } from "../../../State/checkout.slice"
 import { selectAuth } from "../../../State/auth.slice"
@@ -231,4 +231,4 @@ function Checkout() {
     )
 }
 
-export default Checkout
+export default Checkout;

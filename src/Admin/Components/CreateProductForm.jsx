@@ -1,61 +1,108 @@
 import { Button, Grid, TextField, Typography } from "@mui/material";
 // eslint-disable-next-line no-unused-vars
 import React, { Fragment, useEffect, useState } from "react";
-import { api } from "../../config/apiConfig";
+import "./createProduct.css";
+// import { api } from "../../config/apiConfig";
 import { getAccessToken, getUserId } from "../../utils/authUtils";
+import axios, { Axios } from "axios";
+import productService from "../../service/product.service";
 
 function CreateProductForm() {
+  const [categories, setCategories] = useState([]);
   const [productData, setProductData] = useState({
     name: "",
-    image: "",
-    images: [""],
     description: "",
-    price: 0,
-    discount: 0,
-    categoryIds: [""],
-    variations: [
-      {
-        id: "",
-        parentId: "",
-        title: "",
-        description: "",
-        thumb: "",
-        color: "",
-        size: "",
-        quantity: 0,
-      },
-    ],
-    status: "",
+    price: "",
+    categoryIds: [],
+    images: [],
+    variations: [],
   });
+  const [imageUrl, setImageUrl] = useState("");
 
-  const handleChange = (e) => {
-    if (e.target.name === "categoryIds" || e.target.name === "images") {
+  axios
+    .get("/api/categories")
+    .then((response) => {
+      console.log(response.data);
+      setCategories(response.data);
+    })
+    .catch((error) => console.error(error));
+
+  const handleChange = (event) => {
+    if (event.target.name === "image") {
+      const file = event.target.files[0];
+      const url = URL.createObjectURL(file);
+      setImageUrl(url);
+      setProductData({ ...productData, images: [file] });
+    } else if (event.target.name === "categoryIds") {
+      const selectedOptions = Array.from(event.target.selectedOptions);
+      const selectedValues = selectedOptions.map((option) => option.value);
+      setProductData({ ...productData, categoryIds: selectedValues });
+    } else {
       setProductData({
         ...productData,
-        [e.target.name]: e.target.value.split(","),
+        [event.target.name]: event.target.value,
       });
-    } else {
-      setProductData({ ...productData, [e.target.name]: e.target.value });
     }
   };
 
-  const handleVariationChange = (e, index) => {
+  const handleVariationChange = (event, index) => {
     const newVariations = [...productData.variations];
-    newVariations[index][e.target.name] = e.target.value;
+    newVariations[index][event.target.name] = event.target.value;
     setProductData({ ...productData, variations: newVariations });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await createProduct({ data: productData });
-      if (response && response.success) {
-        console.log("Sản phẩm add thành công:", response.product);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const result = await createProduct();
+    if (result.success) {
+      alert("Product created successfully");
+    } else {
+      alert("Failed to create product: " + result.message);
+    }
+  };
+
+  const createProduct = async () => {
+    const formData = new FormData();
+
+    // Append product data to formData
+    for (const key in productData) {
+      if (key === "images") {
+        productData[key].forEach((image, index) => {
+          formData.append(`images[${index}]`, image);
+        });
+      } else if (key === "variations") {
+        productData[key].forEach((variation, index) => {
+          for (const variationKey in variation) {
+            formData.append(
+              `variations[${index}][${variationKey}]`,
+              variation[variationKey]
+            );
+          }
+        });
+      } else if (Array.isArray(productData[key])) {
+        productData[key].forEach((value, index) => {
+          formData.append(`${key}[${index}]`, value);
+        });
       } else {
-        console.log("Failed to add product");
+        formData.append(key, productData[key]);
       }
+    }
+
+    try {
+      const response = await fetch("/api/products", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return { success: true, data };
     } catch (error) {
-      console.error("Lỗi khi add sản phẩm:", error);
+      console.error("Network error:", error); // Debugging line
+      return { success: false, message: error.message };
     }
   };
 
@@ -82,15 +129,31 @@ function CreateProductForm() {
           </Grid>
 
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Image"
+            <input
+              accept="image/*"
+              style={{ display: "none" }}
+              id="raised-button-file"
+              multiple
+              type="file"
               name="image"
-              value={productData.image}
               onChange={handleChange}
             />
-          </Grid>
+            <label
+              htmlFor="raised-button-file"
+              className="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 cursor-pointer">
+              <Button variant="raised" component="span">
+                Tải hình ảnh lên
+              </Button>
+            </label>
 
+            {imageUrl && (
+              <img
+                src={imageUrl}
+                alt="Product"
+                style={{ width: "200px", height: "auto" }}
+              />
+            )}
+          </Grid>
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -100,7 +163,6 @@ function CreateProductForm() {
               onChange={handleChange}
             />
           </Grid>
-
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
@@ -110,7 +172,6 @@ function CreateProductForm() {
               onChange={handleChange}
             />
           </Grid>
-
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
@@ -121,7 +182,6 @@ function CreateProductForm() {
               onChange={handleChange}
             />
           </Grid>
-
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -131,22 +191,30 @@ function CreateProductForm() {
               onChange={handleChange}
             />
           </Grid>
-
           {/* Category IDs */}
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Category IDs"
-              name="categoryIds"
-              value={productData.categoryIds}
-              onChange={handleChange}
-            />
+            <div style={{ width: "100%" }}>
+              <label htmlFor="category-select">Category</label>
+              <select
+                id="category-select"
+                name="categoryIds"
+                value={productData.categoryIds}
+                onChange={handleChange}
+                multiple
+                style={{ width: "100%" }}>
+                {Array.isArray(categories) &&
+                  categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
           </Grid>
-
           {/* Variations */}
           {productData.variations.map((variation, index) => (
             <Grid container item spacing={3} key={index}>
-              <Grid item xs={12} sm={6}>
+              {/* <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="ID"
@@ -154,8 +222,8 @@ function CreateProductForm() {
                   value={variation.id}
                   onChange={(event) => handleVariationChange(event, index)}
                 />
-              </Grid>
-              <Grid item xs={12} sm={6}>
+              </Grid> */}
+              {/* <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Parent ID"
@@ -163,7 +231,7 @@ function CreateProductForm() {
                   value={variation.parentId}
                   onChange={(event) => handleVariationChange(event, index)}
                 />
-              </Grid>
+              </Grid> */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
@@ -182,7 +250,7 @@ function CreateProductForm() {
                   onChange={(event) => handleVariationChange(event, index)}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              {/* <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Thumb"
@@ -190,7 +258,7 @@ function CreateProductForm() {
                   value={variation.thumb}
                   onChange={(event) => handleVariationChange(event, index)}
                 />
-              </Grid>
+              </Grid> */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
@@ -220,7 +288,6 @@ function CreateProductForm() {
               </Grid>
             </Grid>
           ))}
-
           <Grid item xs={12}>
             <Button
               variant="contained"
@@ -237,26 +304,80 @@ function CreateProductForm() {
   );
 }
 
-async function createProduct({ data }) {
-  try {
-    const response = await api.post("/product", data, {
-      headers: {
-        authorization: getAccessToken(),
-        "x-client-id": getUserId(),
-      },
-    });
-    console.log("API Response:", response);
+// async function createProduct({ data }) {
+//   console.log("Input data:", data);
+//   const formData = new FormData();
+//   Object.keys(data).forEach((key) => {
+//     if (key === "images" && Array.isArray(data[key])) {
+//       data[key].forEach((image, index) => {
+//         formData.append(`${key}[${index}]`, image);
+//       });
+//     } else {
+//       formData.append(key, data[key]);
+//     }
+//   });
 
-    if (response.status === 200) {
-      return { success: true, product: response.data };
-    } else {
-      return { success: false };
-    }
-  } catch (error) {
-    console.error("Lỗi khi fetching dữ liệu:", error);
-    console.error("Error details:", error.response);
-    return { success: false };
-  }
-}
+//   // Log the contents of the FormData object
+//   for (let [key, value] of formData.entries()) {
+//     console.log(`${key}: ${value}`);
+//   }
+
+//   try {
+//     const response = await api.post("/product", formData, {
+//       headers: {
+//         authorization: getAccessToken(),
+//         "x-client-id": getUserId(),
+//       },
+//     });
+//     console.log("API Response:", response);
+
+//     if (response.status >= 200 && response.status < 300) {
+//       return { success: true, product: response.data };
+//     } else {
+//       console.error("Unexpected response status:", response.status);
+//       return { success: false };
+//     }
+//   } catch (error) {
+//     console.error("Error when fetching data:", error);
+//     if (error.response) {
+//       console.error("Error details:", error.response);
+//       if (error.response.status === 404) {
+//         console.error("Could not find category id:", error.response.data);
+//       }
+//     }
+//     return { success: false }; // Ensure a value is returned in case of error
+//   }
+// }
+
+// async function createProduct({ data }) {
+//   console.log('Input data:', data);
+
+//   try {
+//     const response = await api.post("/product", data, {
+//       headers: {
+//         authorization: getAccessToken(),
+//         "x-client-id": getUserId(),
+//         'Content-Type': 'application/json',
+//       },
+//     });
+//     console.log("API Response:", response);
+
+//     if (response.status >= 200 && response.status < 300) {
+//       return { success: true, product: response.data };
+//     } else {
+//       console.error("Unexpected response status:", response.status);
+//       return { success: false };
+//     }
+//   } catch (error) {
+//     console.error("Error when fetching data:", error);
+//     if (error.response) {
+//       console.error("Error details:", error.response);
+//       if (error.response.status === 404) {
+//         console.error("Could not find category id:", error.response.data);
+//       }
+//     }
+//     return { success: false };
+//   }
+// }
 
 export default CreateProductForm;
