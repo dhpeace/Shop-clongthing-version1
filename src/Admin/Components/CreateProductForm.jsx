@@ -63,7 +63,6 @@ function CreateProductForm() {
 
   const createProduct = async () => {
     const formData = new FormData();
-
     // Append product data to formData
     for (const key in productData) {
       if (key === "images") {
@@ -214,16 +213,7 @@ function CreateProductForm() {
           {/* Variations */}
           {productData.variations.map((variation, index) => (
             <Grid container item spacing={3} key={index}>
-              {/* <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="ID"
-                  name="id"
-                  value={variation.id}
-                  onChange={(event) => handleVariationChange(event, index)}
-                />
-              </Grid> */}
-              {/* <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Parent ID"
@@ -231,7 +221,7 @@ function CreateProductForm() {
                   value={variation.parentId}
                   onChange={(event) => handleVariationChange(event, index)}
                 />
-              </Grid> */}
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
@@ -250,7 +240,7 @@ function CreateProductForm() {
                   onChange={(event) => handleVariationChange(event, index)}
                 />
               </Grid>
-              {/* <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Thumb"
@@ -258,7 +248,7 @@ function CreateProductForm() {
                   value={variation.thumb}
                   onChange={(event) => handleVariationChange(event, index)}
                 />
-              </Grid> */}
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
