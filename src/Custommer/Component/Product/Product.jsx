@@ -394,8 +394,8 @@ export default function Product() {
                                     <Pagination
                                         className="shadow-md text-gray-700 hover:text-gray-900 active:text-gray-500 bg-white rounded-lg"
                                         pageSizelist={[6, 9, 12]}
-                                        page={query.page + 1}
                                         onChange={hanglePaginationChange}
+                                        page={query.page + 1}
                                         totalPage={totalPage}
                                         pageSize={query.size}
                                     />
