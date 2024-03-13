@@ -79,35 +79,34 @@ function CreateProductForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setProductData((prevData) => ({
-      ...prevData,
-      variations: [...prevData.variations, currentVariation],
+    const updatedProductData = {
+      ...productData,
+      variations: [...productData.variations, currentVariation],
       image: selectImage.url,
-    }));
-
+    };
+    setProductData(updatedProductData);
     if (
-      !productData.name ||
-      !productData.image ||
-      !productData.description ||
-      !productData.price ||
-      !productData.status
+      !updatedProductData.name ||
+      !updatedProductData.image ||
+      !updatedProductData.description ||
+      !updatedProductData.price ||
+      !updatedProductData.priceImport ||
+      !updatedProductData.status
     ) {
-      alert("Nhập đầy đủ");
+      alert("Vui lòng điền đầy đủ thông tin");
       return;
     }
-
-    if (!productData.image || productData.images.length === 0) {
-      alert("Nhập hình dùm cái");
+    if (!updatedProductData.image || updatedProductData.images.length === 0) {
+      alert("Vui lòng chọn hình ảnh sản phẩm");
       return;
     }
-
     const result = await createProduct();
     if (result.success) {
-      console.log("Product created successfully:");
+      console.log("Sản phẩm đã được tạo thành công");
       setCurrentVariation({ color: "", size: "", quantity: 0 });
     } else {
-      alert("Failed to create product: " + result.message);
-      console.log("Failed to create product: " + result);
+      alert("Không thể tạo sản phẩm: " + result.message);
+      console.log("Không thể tạo sản phẩm: " + result.message);
     }
   };
 
@@ -130,38 +129,27 @@ function CreateProductForm() {
   };
 
   const createProduct = async () => {
-    console.log(productData);
-    for (const key in productData) {
-      if (key === "variations") {
-        if (Array.isArray(productData[key])) {
-          productData[key].forEach((item, index) => {
-            for (const field in item) {
-              productData[`variations[${index}][${field}]`] = item[field];
-            }
-          });
-        }
-      } else if (key === "images") {
-        productData[key].forEach((item, index) => {
-          productData[`images[${index}]`] = item.url;
-        });
-      } else if (key === "image") {
-        productData["image"] = productData[key];
-      }
-    }
     try {
-      const response = await api.post("/product", productData);
+      const postData = { ...productData };
+      if (Array.isArray(postData.variations)) {
+        postData.variations = postData.variations.map((variation) => ({
+          ...variation,
+        }));
+      }
+      if (Array.isArray(postData.images)) {
+        postData.images = postData.images.map((image) => image.url);
+      }
+      const response = await api.post("/product", postData);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = await response.json();
-
       if (!data.success) {
         throw new Error(data.message);
       }
-
       return { success: true, data };
     } catch (error) {
+      // Xử lý lỗi
       console.error("Network error:", error);
       return { success: false, message: error.message };
     }
