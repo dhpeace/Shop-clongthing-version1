@@ -1,15 +1,13 @@
-import { Button, Grid, Select, TextField, Typography } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 // eslint-disable-next-line no-unused-vars
 import React, { Fragment, useEffect, useState } from "react";
 import "./createProduct.css";
 import { api } from "../../config/apiConfig";
-import { getAccessToken, getUserId } from "../../utils/authUtils";
-import axios from "axios";
-import productService from "../../service/product.service";
 import { TreeItem, TreeView } from "@mui/x-tree-view";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import cln from "classnames";
+import ModalImage from "./ImageModal";
 const cl = cln.bind();
 
 // getCategory
@@ -33,28 +31,26 @@ function CreateProductForm() {
     image: "",
     images: [],
     description: "",
-    price: 100.0,
-    priceImport: 50.0,
+    price: 0,
+    priceImport: 0,
     categoryIds: [],
     variations: [],
     status: "",
   });
 
+  const [visible, setVisible] = useState(false);
+  const [selectImage, setSelectImage] = useState({
+    id: null,
+    publicId: "",
+    url: "",
+  });
+
   const [categories, setCategories] = useState([]);
-  const [imageUrl, setImageUrl] = useState("");
   const [currentVariation, setCurrentVariation] = useState({
     color: "",
     size: "",
     quantity: 0,
   });
-  const [variations, setVariations] = useState([]);
-
-  const addVariation = () => {
-    const newVariations = [...variations, currentVariation];
-    setVariations(newVariations);
-    setProductData({ ...productData, variations: newVariations });
-    setCurrentVariation({ color: "", size: "", quantity: 0 });
-  };
 
   useEffect(() => {
     const fetch = async () => {
@@ -74,30 +70,43 @@ function CreateProductForm() {
   console.log("product", productData);
 
   const handleChange = (event) => {
-    if (event.target.name === "image") {
-      const file = event.target.files[0];
-      const url = URL.createObjectURL(file);
-      setImageUrl(url);
-      setProductData({ ...productData, images: [file] });
-    } else if (event.target.name === "categoryIds") {
-      const selectedOptions = Array.from(event.target.selectedOptions);
-      const selectedValues = selectedOptions.map((option) => option.value);
-      setProductData({ ...productData, categoryIds: selectedValues });
-    } else {
-      setProductData({
-        ...productData,
-        [event.target.name]: event.target.value,
-      });
-    }
+    setProductData({
+      ...productData,
+      [event.target.name]: event.target.value,
+    });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setProductData((prevData) => ({
+      ...prevData,
+      variations: [...prevData.variations, currentVariation],
+      image: selectImage.url,
+    }));
+
+    if (
+      !productData.name ||
+      !productData.image ||
+      !productData.description ||
+      !productData.price ||
+      !productData.status
+    ) {
+      alert("Nhập đầy đủ");
+      return;
+    }
+
+    if (!productData.image || productData.images.length === 0) {
+      alert("Nhập hình dùm cái");
+      return;
+    }
+
     const result = await createProduct();
     if (result.success) {
-      alert("Product created successfully");
+      console.log("Product created successfully:");
+      setCurrentVariation({ color: "", size: "", quantity: 0 });
     } else {
       alert("Failed to create product: " + result.message);
+      console.log("Failed to create product: " + result);
     }
   };
 
@@ -108,42 +117,63 @@ function CreateProductForm() {
     });
   };
 
+  const handleSelectImage = (image) => {
+    setVisible(!visible);
+    setSelectImage(image);
+    setProductData((prevData) => ({
+      ...prevData,
+      image: image.url,
+      images: [...prevData.images, image],
+    }));
+    console.log("select image", image);
+  };
+
   const createProduct = async () => {
-    const formData = new FormData();
+    console.log(productData);
     for (const key in productData) {
-      if (key === "images") {
-        productData[key].forEach((image, index) => {
-          formData.append(`images[${index}]`, image);
+      if (key === "variations") {
+        if (Array.isArray(productData[key])) {
+          productData[key].forEach((item, index) => {
+            for (const field in item) {
+              productData[`variations[${index}][${field}]`] = item[field];
+            }
+          });
+        }
+      } else if (key === "images") {
+        productData[key].forEach((item, index) => {
+          productData[`images[${index}]`] = item.url;
         });
-      } else if (key === "variations") {
-        // Stringify the variations array
-        formData.append(key, JSON.stringify(productData[key]));
-      } else if (Array.isArray(productData[key])) {
-        productData[key].forEach((value, index) => {
-          formData.append(`${key}[${index}]`, value);
-        });
-      } else {
-        formData.append(key, productData[key]);
+      } else if (key === "image") {
+        productData["image"] = productData[key];
       }
     }
 
-    axios
-      .post("/product", formData)
-      .then((response) => {
-        if (response.status !== 200) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = response.data;
-        return { success: true, data };
-      })
-      .catch((error) => {
-        console.error("Network error:", error);
-        return { success: false, message: error.message };
-      });
+    try {
+      const response = await api.post("/product", productData);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error("Network error:", error);
+      return { success: false, message: error.message };
+    }
   };
 
   return (
     <Fragment>
+      <ModalImage
+        isVisible={visible}
+        onClose={() => setVisible(false)}
+        onSelectImage={handleSelectImage}
+      />
       <div className="py-5 ml-16 text-xl font-bold">Add New Product</div>
       <form
         onSubmit={handleSubmit}
@@ -158,26 +188,12 @@ function CreateProductForm() {
             className="w-full p-2 border border-gray-300 rounded-md"
           />
           <div className="flex items-center gap-4">
-            <input
-              accept="image/*"
-              className="hidden"
-              id="raised-button-file"
-              multiple
-              type="file"
-              name="image"
-              onChange={handleChange}
-            />
-            <label
-              htmlFor="raised-button-file"
-              className="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 cursor-pointer">
-              <Button variant="raised" component="span">
-                Upload Image
-              </Button>
-            </label>
-
-            {imageUrl && (
+            <Button variant="contained" onClick={() => setVisible(!visible)}>
+              select image
+            </Button>
+            {selectImage && (
               <img
-                src={imageUrl}
+                src={selectImage?.url}
                 alt="Product"
                 className="w-24 h-24 object-cover rounded-md"
               />
@@ -196,6 +212,14 @@ function CreateProductForm() {
             label="Price"
             name="price"
             value={productData.price}
+            onChange={handleChange}
+            className="w-full"
+          />
+          <TextField
+            fullWidth
+            label="Price"
+            name="priceImport"
+            value={productData.priceImport}
             onChange={handleChange}
             className="w-full"
           />
@@ -321,11 +345,6 @@ function CreateProductForm() {
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
               />
             </div>
-            <button
-              onClick={addVariation}
-              className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-700">
-              Add Variation
-            </button>
           </div>
 
           {/* Button add new Product */}
@@ -334,7 +353,8 @@ function CreateProductForm() {
               variant="contained"
               className="py-20"
               size="large"
-              type="submit">
+              type="submit"
+              onClick={handleSubmit}>
               Add new Product
             </Button>
           </div>

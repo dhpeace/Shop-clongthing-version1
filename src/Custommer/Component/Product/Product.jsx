@@ -372,7 +372,7 @@ export default function Product() {
                         }))
                       }
                       value={query?.minPrice ? query.minPrice : ""}
-                      label="min price (d)"
+                      label="min price (nghin dong)"
                       type="number"
                       size="small"
                       InputLabelProps={{
@@ -395,7 +395,7 @@ export default function Product() {
                       }}
                       value={query.maxPrice ? query.maxPrice : ""}
                       size="small"
-                      label="max price (d)"
+                      label="max price (nghin dong)"
                       type="number"
                       variant="outlined"
                       InputLabelProps={{
@@ -423,6 +423,10 @@ export default function Product() {
                     <h1 className="text-gray-600 font-semibold text-2xl">
                       no product with:
                       {Object.keys(query)
+                        .filter(
+                          (key) =>
+                            query[key] && key !== "size" && key !== "page"
+                        )
                         .map((key) => `${key}=${query[key]}`)
                         .join("\n")}
                     </h1>
@@ -432,8 +436,8 @@ export default function Product() {
                   <Pagination
                     className="shadow-md text-gray-700 hover:text-gray-900 active:text-gray-500 bg-white rounded-lg"
                     pageSizelist={[6, 9, 12]}
-                    page={query.page + 1}
                     onChange={hanglePaginationChange}
+                    page={query.page + 1}
                     totalPage={totalPage}
                     pageSize={query.size}
                   />
