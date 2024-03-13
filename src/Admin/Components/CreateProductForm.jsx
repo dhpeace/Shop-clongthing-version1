@@ -9,6 +9,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import cln from "classnames";
 import ModalImage from "./ImageModal";
 const cl = cln.bind();
+import { FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
 
 // getCategory
 const getCategory = (id, cates) => {
@@ -147,7 +148,6 @@ function CreateProductForm() {
         productData["image"] = productData[key];
       }
     }
-
     try {
       const response = await api.post("/product", productData);
       if (!response.ok) {
@@ -155,7 +155,7 @@ function CreateProductForm() {
       }
 
       const data = await response.json();
-      
+
       if (!data.success) {
         throw new Error(data.message);
       }
@@ -223,14 +223,18 @@ function CreateProductForm() {
             onChange={handleChange}
             className="w-full"
           />
-          <TextField
-            fullWidth
-            label="Status"
-            name="status"
-            value={productData.status}
-            onChange={handleChange}
-            className="w-full"
-          />
+          <FormControl fullWidth className="w-full">
+            <InputLabel id="status-label">Status</InputLabel>
+            <Select
+              labelId="status-label"
+              name="status"
+              value={productData.status}
+              onChange={handleChange}>
+              <MenuItem value="DRAFT">DRAFT</MenuItem>
+              <MenuItem value="PUBLISHED">PUBLISHED</MenuItem>
+            </Select>
+          </FormControl>
+
           {/* Category IDs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="w-full">
@@ -346,7 +350,6 @@ function CreateProductForm() {
               />
             </div>
           </div>
-
           {/* Button add new Product */}
           <div>
             <Button
